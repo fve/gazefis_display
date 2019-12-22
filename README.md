@@ -8,31 +8,63 @@ The display is based on 4D Systems [70D-SB](https://4dsystems.com.au/products/4d
 The display reads frames from the COM0 / COM1 ports
 
 ###Frame format (fixed lenght, ASCII 8bits, 38400bps):
+```
+:SPEED,ALTITUDE_1013,QNH,PITCH,ROLL,GMETER,SLIP,HEADING,RPM,EGT,WATER,TURBO,OILTEMP,OILPRESSURE,FUEL,AMPS,VOLTS,BAK,TEXT,CRLF
+```
 
-:SSSSAAAAAPPPRRRRGGGLLLHHHRPMEGTWATTURTOIPOIFUEAAAVVVBAKEXTEG2EG3EG4CH1CH2CH3CH4CRLF
+Separator between fields can be SPACE , ; TAB
+Multiple separators are allowed (e.g./ SPACE & ,), only one will be taken into account. Use 999 for EGT/CHT not used.
 
 Where:
 ```
-    // SSSS Speed in 1/10 kts or Km/h
-    // AAAAA Altitude = feets
-    // PPP Pitch in 1/10 Deg
-    // RRRR Roll in 1/10 Deg
-    // GGG G=meter in 1/100 G
-    // LLL Slip in 1/10 G
-    // HHH Headinf in Deg
+    // SPEED Speed in 1/10 kts or Km/h
+    // ALTITUDE_1013 Flight level in feets (.;g.: 9500)
+    // FLIGHT_LEVEL Flight level = feets (1013)
+    // QNH QNH mbar
+    // PITCH Pitch in 1/10 Deg (positive climbing). 
+    // RRRR Roll in 1/10 Deg (positive turn right)
+    // GMETER G=meter in 1/100 G
+    // SLIP Slip in 1/10 G
+    // HEADING Heading in Deg
     // RPM Engine rpm /10 (400 for 4000)
     // EGT in Deg / 10 (70 for 700)
-    // WAT Temp water in deg
-    // TUR Turbo pressure in mbar / 10 (180 for 1800 mbar)
-    // TOI Oil temp in Deg
-    // POI Oil pressure in mbar / 10
-    // FUE Fuel in liter
-    // AAA Amprs in 1/10 Amp
-    // VVV Volts in 1/10 volts
+    // WATER Temp water in deg
+    // TURBO Turbo pressure in mbar / 10 (180 for 1800 mbar)
+    // OILTEMP Oil temp in Deg
+    // OILPRESSURE Oil pressure in mbar / 10
+    // FUEL Fuel in liter
+    // AMPS Amprs in 1/10 Amp
+    // VOLTS Volts in 1/10 volts
     // BAK Backup voltage 1/10 volts
-    // EXT Ext temp in 1/10 Deg
-    // EG2, EG3, EG4 EGT 2/3/4 in Deg/10 (optional, use 999 if nor used)
-    // CH1 CH2 CH3 CH4 CHTs in deg/10 (optional, use 999 if not used)
+    // TEXT Ext temp in 1/10 Deg
     // CR Carriage return
     // LF Line feed
 ```
+
+Example
+```
+:125,10000,1028,40,-200,110,1,300,432,70,93,180,110,200,35,100,138,72,12CRLF
+
+125 Knots
+10000ft / 1013
+QNH 1028
+PITCH 4° UP
+ROLL 10° LEFT
+GMeter 1,1G
+0,1G Right Slip
+Heading 300°C
+RPM 4320
+EGT 700°C
+Temp Eau 93°C
+Turbo 1800 mbars
+Oil Temp 110°C
+Oil pressure 2000 mbars
+Fuel 35 Liters
+Amp 10.0 A load
+Volts 13.8V
+Volts backup battery EFIS 7.2V
+Ext temperateure 12°C
+
+
+## Outputs
+There is no output. Future versions will return Heading, QNH and 
