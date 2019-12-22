@@ -1,19 +1,22 @@
 # gazefis_display
-The display part of the GAZEFIS project, open source EFIS for homebuilt aircrafts (initial version for GAZAILE)
+The display part of the GAZEFIS project, open source EFIS for homebuilt aircrafts (initial version for GAZAILE).
+
+Partie display du projet GAZEFIS D'EFIS open source, basé sur écran industrial 4D Systems.
 
 The display is based on 4D Systems [70D-SB](https://4dsystems.com.au/products/4d-intelligent-hmi-display-modules/gen4-ulcd-70d-sb) (super bright) from [4D Systems](https://4dsystems.com.au).
 
 ## Inputs
 
-The display reads frames from the COM0 / COM1 ports
+The display reads frames from the COM0 / COM1 ports. Trames sur COM0 / COM1.
 
 ###Frame format (fixed lenght, ASCII 8bits, 38400bps):
 ```
 :SPEED,ALTITUDE_1013,QNH,PITCH,ROLL,GMETER,SLIP,HEADING,RPM,EGT,WATER,TURBO,OILTEMP,OILPRESSURE,FUEL,AMPS,VOLTS,BAK,TEXT,CRLF
 ```
 
-Separator between fields can be SPACE , ; TAB
+Separator SPACE , ; TAB
 Multiple separators are allowed (e.g./ SPACE & ,), only one will be taken into account. Use 999 for EGT/CHT not used.
+Si plusisurs séparateurs, seul 1 est utilisé (les valeurs non utilisées doivent être remplies)
 
 Where:
 ```
