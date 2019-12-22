@@ -71,4 +71,4 @@ Ext temperateure 12°C
 
 
 ## Outputs
-There is no output. Future versions will return Heading, QNH and 
+There is no output. Future versions will return Heading offset and QNH 
