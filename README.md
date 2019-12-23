@@ -9,21 +9,20 @@ The display is based on 4D Systems [70D-SB](https://4dsystems.com.au/products/4d
 
 The display reads frames from the COM0 / COM1 ports. Trames sur COM0 / COM1.
 
-###Frame format (fixed lenght, ASCII 8bits, 38400bps):
+###Frame format (ASCII 8bits, 38400bps):
 ```
 :SPEED,ALTITUDE_1013,QNH,PITCH,ROLL,GMETER,SLIP,HEADING,RPM,EGT,
 WATER,TURBO,OILTEMP,OILPRESSURE,FUEL,AMPS,VOLTS,BAK,TEXT,CRLF
 ```
 
 Separator SPACE , ; TAB
-Multiple separators are allowed (e.g./ SPACE & ,), only one will be taken into account. Use 999 for EGT/CHT not used.
-Si plusisurs séparateurs, seul 1 est utilisé (les valeurs non utilisées doivent être remplies)
+Multiple separators are allowed (e.g./ SPACE & ,), only one will be taken into account. Use 999 for EGT/CHT not used. WARNING: no decimal sign!
+Si plusieurs séparateurs, seul 1 est utilisé (les valeurs non utilisées doivent être remplies). Attention pas de séparateur décimal!
 
 Where:
 ```
     // SPEED Speed in 1/10 kts or Km/h
-    // ALTITUDE_1013 Flight level in feets (.;g.: 9500)
-    // FLIGHT_LEVEL Flight level = feets (1013)
+    // ALTITUDE_1013 Flight level in feets
     // QNH QNH mbar
     // PITCH Pitch in 1/10 Deg (positive climbing). 
     // RRRR Roll in 1/10 Deg (positive turn right)
