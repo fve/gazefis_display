@@ -1,0 +1,7 @@
+"EFISFrame" 0000 0000 00 00
+"altfeetribonsmall" BA00 000B 1F4 64
+"ribbonzero" DE00 000B 21E 64
+"Number22" E800 000B 32 69
+"DI" 1E00 000C 71 109
+"RPM" 9400 01C3 1F0 00
+"OilTemp" BA00 01E2 21C 118

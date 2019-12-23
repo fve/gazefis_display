@@ -1,0 +1,197 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-70D-CLB-L
+PlatRes     480x800
+Depends
+end
+Options
+    Visualizer
+    Speed                        9600
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  0
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+end
+Form
+    Name                         Form1
+    Alias                        Form1
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Image
+    Name                         EFISFrame
+    Alias                        EFISFRame
+    Height                       480
+    Image                        Full-EFIS.jpg
+    Left                         0
+    Source.Height                480
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 800
+    Top                          0
+    Width                        800
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Image
+    Name                         altfeetribonsmall
+    Alias                        altfeetribonsmall
+    Height                       296
+    Image                        alt-feet-ribbon_single.jpg
+    Left                         500
+    Source.Height                296
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 15
+    Top                          100
+    Width                        15
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Image
+    Name                         ribbonzero
+    Alias                        ribbonzero
+    Height                       75
+    Image                        alt-feet-ribbon.-zero.jpg
+    Left                         542
+    Source.Height                75
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 15
+    Top                          100
+    Width                        15
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+UserImages
+    Name                         Number22
+    Alias                        Number22
+    Height                       31
+    Images                       0-31.jpg\n1-31.jpg\n2-31.jpg\n3-31.jpg\n4-31.jpg\n5-31.jpg\n6-31.jpg\n7-31.jpg\n8-31.jpg\n9-31.jpg
+    Left                         50
+    Stretch                      No
+    Top                          105
+    Width                        22
+    OnChanged                    ''
+end
+UserImages
+    Name                         DI
+    Alias                        DI
+    Height                       200
+    Images                       000.jpg\n001.jpg\n002.jpg\n003.jpg\n004.jpg\n005.jpg\n006.jpg\n007.jpg\n008.jpg\n009.jpg\n010.jpg\n011.jpg\n012.jpg\n013.jpg\n014.jpg\n015.jpg\n016.jpg\n017.jpg\n018.jpg\n019.jpg\n020.jpg\n021.jpg\n022.jpg\n023.jpg\n024.jpg\n025.jpg\n026.jpg\n027.jpg\n028.jpg\n029.jpg\n030.jpg\n031.jpg\n032.jpg\n033.jpg\n034.jpg\n035.jpg\n036.jpg\n037.jpg\n038.jpg\n039.jpg\n040.jpg\n041.jpg\n042.jpg\n043.jpg\n044.jpg\n045.jpg\n046.jpg\n047.jpg\n048.jpg\n049.jpg\n050.jpg\n051.jpg\n052.jpg\n053.jpg\n054.jpg\n055.jpg\n056.jpg\n057.jpg\n058.jpg\n059.jpg\n060.jpg\n061.jpg\n062.jpg\n063.jpg\n064.jpg\n065.jpg\n066.jpg\n067.jpg\n068.jpg\n069.jpg\n070.jpg\n071.jpg\n072.jpg\n073.jpg\n074.jpg\n075.jpg\n076.jpg\n077.jpg\n078.jpg\n079.jpg\n080.jpg\n081.jpg\n082.jpg\n083.jpg\n084.jpg\n085.jpg\n086.jpg\n087.jpg\n088.jpg\n089.jpg\n090.jpg\n091.jpg\n092.jpg\n093.jpg\n094.jpg\n095.jpg\n096.jpg\n097.jpg\n098.jpg\n099.jpg\n100.jpg\n101.jpg\n102.jpg\n103.jpg\n104.jpg\n105.jpg\n106.jpg\n107.jpg\n108.jpg\n109.jpg\n110.jpg\n111.jpg\n112.jpg\n113.jpg\n114.jpg\n115.jpg\n116.jpg\n117.jpg\n118.jpg\n119.jpg\n120.jpg\n121.jpg\n122.jpg\n123.jpg\n124.jpg\n125.jpg\n126.jpg\n127.jpg\n128.jpg\n129.jpg\n130.jpg\n131.jpg\n132.jpg\n133.jpg\n134.jpg\n135.jpg\n136.jpg\n137.jpg\n138.jpg\n139.jpg\n140.jpg\n141.jpg\n142.jpg\n143.jpg\n144.jpg\n145.jpg\n146.jpg\n147.jpg\n148.jpg\n149.jpg\n150.jpg\n151.jpg\n152.jpg\n153.jpg\n154.jpg\n155.jpg\n156.jpg\n157.jpg\n158.jpg\n159.jpg\n160.jpg\n161.jpg\n162.jpg\n163.jpg\n164.jpg\n165.jpg\n166.jpg\n167.jpg\n168.jpg\n169.jpg\n170.jpg\n171.jpg\n172.jpg\n173.jpg\n174.jpg\n175.jpg\n176.jpg\n177.jpg\n178.jpg\n179.jpg\n180.jpg\n181.jpg\n182.jpg\n183.jpg\n184.jpg\n185.jpg\n186.jpg\n187.jpg\n188.jpg\n189.jpg\n190.jpg\n191.jpg\n192.jpg\n193.jpg\n194.jpg\n195.jpg\n196.jpg\n197.jpg\n198.jpg\n199.jpg\n200.jpg\n201.jpg\n202.jpg\n203.jpg\n204.jpg\n205.jpg\n206.jpg\n207.jpg\n208.jpg\n209.jpg\n210.jpg\n211.jpg\n212.jpg\n213.jpg\n214.jpg\n215.jpg\n216.jpg\n217.jpg\n218.jpg\n219.jpg\n220.jpg\n221.jpg\n222.jpg\n223.jpg\n224.jpg\n225.jpg\n226.jpg\n227.jpg\n228.jpg\n229.jpg\n230.jpg\n231.jpg\n232.jpg\n233.jpg\n234.jpg\n235.jpg\n236.jpg\n237.jpg\n238.jpg\n239.jpg\n240.jpg\n241.jpg\n242.jpg\n243.jpg\n244.jpg\n245.jpg\n246.jpg\n247.jpg\n248.jpg\n249.jpg\n250.jpg\n251.jpg\n252.jpg\n253.jpg\n254.jpg\n255.jpg\n256.jpg\n257.jpg\n258.jpg\n259.jpg\n260.jpg\n261.jpg\n262.jpg\n263.jpg\n264.jpg\n265.jpg\n266.jpg\n267.jpg\n268.jpg\n269.jpg\n270.jpg\n271.jpg\n272.jpg\n273.jpg\n274.jpg\n275.jpg\n276.jpg\n277.jpg\n278.jpg\n279.jpg\n280.jpg\n281.jpg\n282.jpg\n283.jpg\n284.jpg\n285.jpg\n286.jpg\n287.jpg\n288.jpg\n289.jpg\n290.jpg\n291.jpg\n292.jpg\n293.jpg\n294.jpg\n295.jpg\n296.jpg\n297.jpg\n298.jpg\n299.jpg\n300.jpg\n301.jpg\n302.jpg\n303.jpg\n304.jpg\n305.jpg\n306.jpg\n307.jpg\n308.jpg\n309.jpg\n310.jpg\n311.jpg\n312.jpg\n313.jpg\n314.jpg\n315.jpg\n316.jpg\n317.jpg\n318.jpg\n319.jpg\n320.jpg\n321.jpg\n322.jpg\n323.jpg\n324.jpg\n325.jpg\n326.jpg\n327.jpg\n328.jpg\n329.jpg\n330.jpg\n331.jpg\n332.jpg\n333.jpg\n334.jpg\n335.jpg\n336.jpg\n337.jpg\n338.jpg\n339.jpg\n340.jpg\n341.jpg\n342.jpg\n343.jpg\n344.jpg\n345.jpg\n346.jpg\n347.jpg\n348.jpg\n349.jpg\n350.jpg\n351.jpg\n352.jpg\n353.jpg\n354.jpg\n355.jpg\n356.jpg\n357.jpg\n358.jpg\n359.jpg
+    Left                         113
+    Stretch                      No
+    Top                          265
+    Width                        200
+    OnChanged                    ''
+end
+AngularMeter
+    Name                         RPM
+    Alias                        RPM
+    Angle                        40
+    AngleOffset                  280
+    Caption                      RPM
+    CaptionXOffset               0
+    CaptionYOffset               0
+    CenterDotColor               BLACK
+    CenterDotWidth               30
+    Color                        BLACK
+    ColorZone1                   RED
+    ColorZone2                   LIME
+    ColorZone3                   clRed
+    Decimals                     0
+    Font.Color                   clWhite
+    Font.Effects                 []
+    Font.Name                    Tahoma
+    Font.Size                    8
+    Font.Style                   []
+    Height                       135
+    Labels                       0
+    LabelsFont.Color             clWhite
+    LabelsFont.Effects           []
+    LabelsFont.Name              Tahoma
+    LabelsFont.Size              8
+    LabelsFont.Style             []
+    LabelsOffset                 30
+    Left                         496
+    Maxvalue                     55
+    Minvalue                     0
+    NeedleBasewidth              8
+    NeedleColor                  WHITE
+    NeedleLength                 -1
+    Percent1                     24
+    Percent2                     65
+    Radius                       -1
+    Spacing                      15
+    Ticks                        0
+    TicksColor                   BLACK
+    TicksEnlarge                 0
+    TicksMax                     10
+    TicksMin                     5
+    Top                          0
+    Width                        135
+    OnChanged                    ''
+end
+Gauge
+    Name                         OilTemp
+    Alias                        OilTemp
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             BLACK
+    Bevel.InnerHighlight         clBtnHighlight
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            clBtnShadow
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             None
+    Bevel.Innerwidth             2
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           None
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             None
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    Color                        BLACK
+    Height                       104
+    Left                         540
+    Maxvalue                     100
+    Minvalue                     0
+    Orientation                  Vertical
+    Palette1.High                BLUE
+    Palette1.Low                 0x9C0000
+    Palette2.High                LIME
+    Palette2.Low                 0x006900
+    Palette3.High                clRed
+    Palette3.Low                 0x000051
+    Percent1                     60
+    Percent2                     25
+    Spacing                      1
+    Step                         10
+    Style                        BottomLeft
+    TickHeight                   1
+    Top                          280
+    Width                        20
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end

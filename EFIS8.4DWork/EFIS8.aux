@@ -1,0 +1,620 @@
+==============================================================
+==============================================================
+4DGL Compiler 2.8.1.0 -- Copyright 2004-2016 4D Labs
+** E:\EFIS8.4dg
+compiled Fri Nov 29 22:05:22 2019
+
+==============================================================
+==============================================================
+
+
+No Ref for file
+[LINKING]
+function 46, displaySpeedScale, address 0x2ac, stack usage 12 + 4 
+segLen                                 4  word     [local]  (usage 9)
+lastY                                  2  word     [local]  (usage 18)
+speedOffset                            1  word     [local]  (usage 15)
+nextY                                  3  word     [local]  (usage 9)
+color                                  6  word     [local]  (usage 18)
+range                                  5  word     [local]  (usage 18)
+speed                                  1  word     [arg]  (usage 3)
+
+[LINKING]
+function 45, delayDisplay, address 0x395, stack usage 2 + 4 
+newDisplayT                            1  word     [local]  (usage 9)
+
+[LINKING]
+function 44, displayTime, address 0x3ba, stack usage 6 + 4 
+prevMin                                2  word     [local]  (usage 6)
+prevHour                               1  word     [local]  (usage 6)
+prevSec                                3  word     [local]  (usage 6)
+
+[LINKING]
+function 43, displayReferences, address 0x469, stack usage 0 + 4 
+
+[LINKING]
+function 42, displayVario, address 0x598, stack usage 0 + 4 
+vario                                  1  word     [arg]  (usage 24)
+
+[LINKING]
+function 41, updateVario, address 0x64c, stack usage 18 + 4 
+variotab                               4  word[2]  [local]  (usage 9)
+newVario                               9  word     [local]  (usage 9)
+now                                    1  word     [local]  (usage 9)
+variotabmul                            2  word[2]  [local]  (usage 6)
+altDelta                               8  word     [local]  (usage 9)
+alt                                    1  word     [arg]  (usage 12)
+timeDelta                              6  word[2]  [local]  (usage 9)
+
+[LINKING]
+function 40, displaySign, address 0x744, stack usage 0 + 4 
+sign                                   2  word     [arg]  (usage 3)
+X                                      1  word     [arg]  (usage 12)
+Y                                      1  word     [arg]  (usage 12)
+
+[LINKING]
+function 39, displayAlt, address 0x789, stack usage 34 + 4 
+altLow                                13  word     [local]  (usage 21)
+hundreds                              12  word     [local]  (usage 12)
+signH                                 17  word     [local]  (usage 15)
+sign                                  15  word     [local]  (usage 15)
+signL                                 16  word     [local]  (usage 15)
+newAlt                                 1  word     [arg]  (usage 21)
+zeros                                 11  word     [local]  (usage 12)
+altHigh                               14  word     [local]  (usage 21)
+altH                                   5  word[3]  [local]  (usage 48)
+altL                                   8  word[3]  [local]  (usage 48)
+alt                                    1  word[4]  [local]  (usage 69)
+
+[LINKING]
+function 38, displaySpeed, address 0xa73, stack usage 6 + 4 
+newSpeed                               1  word     [arg]  (usage 12)
+speed                                  1  word[3]  [local]  (usage 42)
+
+heading                                1  word     [arg]  (usage 6)
+
+[LINKING]
+function 36, displayDI, address 0xafa, stack usage 0 + 4 
+heading                                1  word     [arg]  (usage 9)
+
+[LINKING]
+function 35, displayRibbon22, address 0xb28, stack usage 0 + 4 
+valueTenth                             1  word     [arg]  (usage 3)
+
+[LINKING]
+function 34, displayLargeDigit, address 0xb4e, stack usage 0 + 4 
+X                                      1  word     [arg]  (usage 9)
+Y                                      1  word     [arg]  (usage 9)
+numberValue                            2  word     [arg]  (usage 6)
+
+[LINKING]
+function 33, displayDigit, address 0xb9c, stack usage 2 + 4 
+value                                  2  word     [arg]  (usage 9)
+p                                      1  word     [local]  (usage 6)
+X                                      1  word     [arg]  (usage 12)
+Y                                      1  word     [arg]  (usage 12)
+
+[LINKING]
+function 32, calculateNumber15Ptr, address 0xbfe, stack usage 2 + 4 
+value                                  1  word     [arg]  (usage 3)
+p                                      1  word     [local]  (usage 9)
+
+[LINKING]
+function 31, displayRibbonZero, address 0xc1a, stack usage 0 + 4 
+valueTenth                             1  word     [arg]  (usage 3)
+
+[LINKING]
+function 30, displayRibbon, address 0xc4a, stack usage 0 + 4 
+valueTenth                             1  word     [arg]  (usage 3)
+
+[LINKING]
+function 29, calculateRibbon15Ptr, address 0xc74, stack usage 2 + 4 
+p                                      1  word     [local]  (usage 12)
+valueTenth                             1  word     [arg]  (usage 9)
+
+[LINKING]
+function 28, calculateRibbonZeroPtr, address 0xcbc, stack usage 2 + 4 
+tenth                                  1  word     [arg]  (usage 9)
+pZero                                  1  word     [local]  (usage 12)
+
+[LINKING]
+function 27, rollFrameOffset, address 0xd01, stack usage 12 + 4 
+roll                                   1  word     [arg]  (usage 24)
+offsetSign                             4  word     [local]  (usage 15)
+pixelsCount                            5  word     [local]  (usage 30)
+decimale                               1  word     [local]  (usage 12)
+absRoll                                3  word     [local]  (usage 21)
+degrees                                2  word     [local]  (usage 18)
+
+[LINKING]
+function 26, pitchFrameOffset, address 0xdf5, stack usage 10 + 4 
+pixelsCount                            4  word     [local]  (usage 36)
+absPitch                               3  word     [local]  (usage 21)
+decimale                               1  word     [local]  (usage 18)
+degrees                                2  word     [local]  (usage 15)
+pitch                                  1  word     [arg]  (usage 3)
+
+[LINKING]
+function 25, preComputedArraysInit, address 0xea3, stack usage 2 + 4 
+value                                  1  word     [local]  (usage 36)
+
+[LINKING]
+function 24, setOnOffState, address 0xf0d, stack usage 2 + 4 
+now                                    1  word     [local]  (usage 9)
+
+[LINKING]
+function 23, prevValuesInit, address 0xf36, stack usage 2 + 4 
+value                                  1  word     [local]  (usage 48)
+
+[LINKING]
+function 22, ribbonInit, address 0x1066, stack usage 0 + 4 
+
+[LINKING]
+function 21, EFISFrameInit, address 0x10ae, stack usage 0 + 4 
+
+[LINKING]
+function 20, efisFrame, address 0x10d7, stack usage 4 + 4 
+roll                                   1  word     [arg]  (usage 12)
+newRollFrameOffset                     2  word     [local]  (usage 9)
+newPitchFrameOffset                    1  word     [local]  (usage 9)
+pitch                                  1  word     [arg]  (usage 15)
+
+[LINKING]
+function 19, main(main entry point), address 0x11ce, stack usage 12 + 4 
+value                                  2  word     [local]  (usage 75)
+rpm                                    4  word     [local]  (usage 30)
+slow                                   3  word     [local]  (usage 72)
+
+[LINKING]
+function 18, sanitizeGauges, address 0x19bd, stack usage 2 + 4 
+i                                      1  word     [local]  (usage 33)
+
+[LINKING]
+function 17, gaugeTexts, address 0x1a25, stack usage 0 + 4 
+
+[LINKING]
+function 16, displayGaugeDigit, address 0x1bf7, stack usage 0 + 4 
+value                                  2  word     [arg]  (usage 3)
+X                                      1  word     [arg]  (usage 3)
+Y                                      1  word     [arg]  (usage 3)
+
+[LINKING]
+function 15, displayAlert, address 0x1c04, stack usage 2 + 4 
+gaugeIndex                             2  word     [arg]  (usage 33)
+X                                      1  word     [arg]  (usage 9)
+alert                                  1  word     [local]  (usage 15)
+Y                                      1  word     [arg]  (usage 9)
+
+[LINKING]
+function 14, displayLinearGauge, address 0x1ceb, stack usage 14 + 4 
+maxMinusMin                            5  word[2]  [local]  (usage 9)
+offsetTmpMul                           1  word[2]  [local]  (usage 6)
+gaugeIndex                             1  word     [arg]  (usage 51)
+offset                                 7  word     [local]  (usage 15)
+offsetTmpDiv                           3  word[2]  [local]  (usage 6)
+
+[LINKING]
+function 13, displayGaugeNumbers, address 0x1df1, stack usage 6 + 4 
+value                                  2  word     [arg]  (usage 9)
+gaugeIndex                             2  word     [arg]  (usage 18)
+X                                      1  word     [arg]  (usage 9)
+Y                                      1  word     [arg]  (usage 9)
+digits                                 1  word[3]  [local]  (usage 42)
+
+[LINKING]
+function 12, displaySmallGaugeNumbers, address 0x1eb2, stack usage 0 + 4 
+value                                  2  word     [arg]  (usage 9)
+format                                 3  word     [arg]  (usage 3)
+gaugeIndex                             2  word     [arg]  (usage 6)
+X                                      1  word     [arg]  (usage 3)
+Y                                      1  word     [arg]  (usage 3)
+
+[LINKING]
+function 11, displayRoundGauge, address 0x1ef9, stack usage 20 + 4 
+angleTmpDiv                            6  word[2]  [local]  (usage 6)
+maxMinusMin                            8  word[2]  [local]  (usage 9)
+gaugeIndex                             1  word     [arg]  (usage 39)
+angle                                 10  word     [local]  (usage 15)
+angleTmpMul                            4  word[2]  [local]  (usage 6)
+
+[LINKING]
+function 10, displayGauges, address 0x1fdb, stack usage 2 + 4 
+i                                      1  word     [local]  (usage 90)
+
+[LINKING]
+function 9, displayGaugeFrames, address 0x214e, stack usage 2 + 4 
+i                                      1  word     [local]  (usage 132)
+
+[LINKING]
+function 8, readOneSerialLine, address 0x2397, stack usage 2 + 4 
+ok                                     1  word     [local]  (usage 12)
+
+
+[LINKING]
+function 6, readLine1, address 0x23f7, stack usage 4 + 4 
+char                                   1  word     [local]  (usage 9)
+ok                                     2  word     [local]  (usage 24)
+
+[LINKING]
+function 5, dispatch, address 0x24b4, stack usage 0 + 4 
+value                                  1  word     [arg]  (usage 24)
+cpt                                    1  word     [arg]  (usage 12)
+
+[LINKING]
+function 4, readLine0, address 0x2538, stack usage 10 + 4 
+value                                  3  word     [local]  (usage 6)
+initRequested                          5  word     [local]  (usage 9)
+char                                   1  word     [local]  (usage 12)
+ok                                     2  word     [local]  (usage 24)
+
+[LINKING]
+function 3, cleanReadBuffer, address 0x26a3, stack usage 0 + 4 
+
+[LINKING]
+function 2, initLine, address 0x26cc, stack usage 0 + 4 
+
+[LINKING]
+function 1, initSerial, address 0x26e0, stack usage 0 + 4 
+
+[RESERVED WORDS]
+#inherit
+#LISTCODE
+#MODE
+#STACK
+#OPTIMIZE_ON
+#OPTIMIZE_OFF
+byte
+word
+dword
+float
+private
+#IF
+#IFNOT
+#ELSE
+#ENDIF
+#CONST
+#constant
+#USE
+USING
+func
+endfunc
+var
+#STOP
+#DATA
+#ASM
+#END
+#platform
+EXISTS
+#ERROR
+#MESSAGE
+#NOTICE
+sizeof
+argcount
+if
+else
+endif
+while
+wend
+repeat
+until
+forever
+return
+break
+continue
+for
+next
+switch
+case
+default
+endswitch
+print
+goto
+gosub
+endsub
+mcall
+lookup8
+lookup16
+
+[MACRO]
+
+[CONSTANTS]
+__MAXMEM                          00008000      32768  (usage 1)
+__MAXPROG                         00007FEE      32750  (usage 1)
+ALTHLX0                           00000183        387  (usage 6)
+ALTHLX1                           00000172        370  (usage 6)
+ALTHLX2                           00000161        353  (usage 6)
+ALTHUNDREDSMIDX                   00000177        375  (usage 3)
+ALTHUNDREDSMIDY                   00000070        112  (usage 3)
+ALTHY                             0000001C         28  (usage 9)
+ALTLY                             000000BF        191  (usage 9)
+ALTREF                            00000021         33  (usage 3)
+ALTTENTHOUSANDSX                  0000014B        331  (usage 3)
+ALTTHOUSANDSX                     00000161        353  (usage 3)
+ALTTHOUSANDSY                     0000006A        106  (usage 6)
+ALTY1                             00000016         22  (usage 6)
+AQUA                              000007FF       2047  (usage 9)
+BLACK                             00000000          0  (usage 36)
+BLUE                              0000001F         31  (usage 6)
+DARKGRAY                          0000AD55      44373  (usage 3)
+DARKRED                           00008800      34816  (usage 6)
+DEC1Z                             0000110A       4362  (usage 3)
+DEC2Z                             0000120A       4618  (usage 6)
+DIABLO                            00000003          3  (usage 3)
+FALSE                             00000000          0  (usage 6)
+FLASH                             0000012C        300  (usage 3)
+FONT_ID                           00000002          2  (usage 15)
+GAUGEANGLE                        000000E1        225  (usage 3)
+GAUGELEN                          00000064        100  (usage 3)
+ialtfeetribonsmall                00000001          1  (usage 3)
+iDI                               00000004          4  (usage 6)
+iEFISFrame                        00000000          0  (usage 6)
+IMAGE_INDEX                       00000009          9  (usage 21)
+iNumber22                         00000003          3  (usage 9)
+iribbonzero                       00000002          2  (usage 6)
+LANDSCAPE                         00000000          0  (usage 3)
+LIGHTSTEELBLUE                    0000B63B      46651  (usage 12)
+LIME                              000007E0       2016  (usage 33)
+ORANGE                            0000FD20      64800  (usage 12)
+PREVALT0                          00000003          3  (usage 6)
+PREVALT00                         0000000F         15  (usage 6)
+PREVALT1                          00000004          4  (usage 6)
+PREVALT2                          00000005          5  (usage 6)
+PREVALT3                          00000006          6  (usage 6)
+PREVALTH0                         0000000D         13  (usage 6)
+PREVALTH1                         00000010         16  (usage 6)
+PREVALTH2                         00000011         17  (usage 6)
+PREVALTL0                         0000000E         14  (usage 6)
+PREVALTL1                         00000012         18  (usage 6)
+PREVALTL2                         00000013         19  (usage 6)
+PREVHEADING                       0000000C         12  (usage 4)
+PREVSIGN                          00000014         20  (usage 6)
+PREVSIGNH                         00000015         21  (usage 6)
+PREVSIGNL                         00000016         22  (usage 6)
+PREVSPEED0                        00000002          2  (usage 6)
+PREVSPEED1                        00000001          1  (usage 6)
+PREVSPEED2                        00000000          0  (usage 6)
+PREVVARIO                         0000000B         11  (usage 6)
+RED                               0000F800      63488  (usage 36)
+RIBBONX                           00000186        390  (usage 12)
+RIBBONY                           00000070        112  (usage 12)
+RIBONSIZE15                       00001158       4440  (usage 6)
+RIBONSIZE15ZERO                   00000465       1125  (usage 3)
+SCREEN_MODE                       00000017         23  (usage 3)
+SIGNHLX                           00000167        359  (usage 6)
+SIGNHY                            00000027         39  (usage 3)
+SIGNLY                            000000CA        202  (usage 3)
+SIGNX                             0000014B        331  (usage 3)
+SIGNY                             0000007A        122  (usage 3)
+SPEED1X                           00000035         53  (usage 3)
+SPEED2X                           0000001F         31  (usage 3)
+SPEEDY                            0000006A        106  (usage 6)
+TEXT_COLOUR                       00000000          0  (usage 9)
+TRUE                              00000001          1  (usage 6)
+VIOLET                            0000EC1D      60445  (usage 6)
+WHITE                             0000FFFF      65535  (usage 24)
+WHITESMOKE                        0000F7BE      63422  (usage 15)
+YELLOW                            0000FFE0      65504  (usage 3)
+
+[PmmC FUNCTIONS]
+ABS                               FFFFFFCB         -53  args=1 r=1  (usage 30)
+com1_Full                         FFFFFF03        -253  args=0 r=1  (usage 3)
+com1_Init                         FFFFFF17        -233  args=3 r=0  (usage 8)
+com_Full                          FFFFFF04        -252  args=0 r=1  (usage 3)
+com_Init                          FFFFFF18        -232  args=3 r=0  (usage 14)
+file_LoadImageControl             FFFFFE3D        -451  args=3 r=1  (usage 12)
+file_Mount                        FFFFFE3C        -452  args=0 r=1  (usage 6)
+gfx_CircleFilled                  FFFFFF77        -137  args=4 r=0  (usage 12)
+gfx_Cls                           FFFFFF82        -126  args=0 r=0  (usage 6)
+gfx_PieSlice                      FFFFFF55        -171  args=9 r=0  (usage 15)
+gfx_ReadGRAMarea                  FFFFFF4C        -180  args=5 r=1  (usage 3)
+gfx_Rectangle                     FFFFFF7A        -134  args=5 r=0  (usage 6)
+gfx_RectangleFilled               FFFFFF79        -135  args=5 r=0  (usage 75)
+gfx_Set                           FFFFFF83        -125  args=2 r=0  (usage 3)
+gfx_WriteGRAMarea                 FFFFFF4B        -181  args=5 r=0  (usage 9)
+img_Enable                        FFFFFE89        -375  args=2 r=1  (usage 3)
+img_SelectReadPosition            FFFFFE7F        -385  args=5 r=1  (usage 3)
+img_SequentialRead                FFFFFE7E        -386  args=2 r=1  (usage 3)
+img_SetPosition                   FFFFFE8A        -374  args=4 r=1  (usage 9)
+img_SetWord                       FFFFFE85        -379  args=4 r=1  (usage 21)
+img_Show                          FFFFFE83        -381  args=2 r=1  (usage 21)
+media_Init                        FFFFFF25        -219  args=0 r=1  (usage 3)
+mem_Set                           FFFFFE5D        -419  args=3 r=1  (usage 3)
+MIN                               FFFFFFCA         -54  args=2 r=1  (usage 12)
+pause                             FFFFFFFA          -6  args=1 r=0  (usage 12)
+putchXY                           FFFFFFFD          -3  args=3 r=0  (usage 15)
+putnumXY                          FFFFFFCD         -51  args=4 r=1  (usage 3)
+putstr                            FFFFFFF7          -9  args=1 r=1  (usage 6)
+putstrXY                          FFFFFFFC          -4  args=3 r=0  (usage 57)
+serin                             FFFFFF14        -236  args=0 r=1  (usage 3)
+serin1                            FFFFFF13        -237  args=0 r=1  (usage 3)
+str_GetW                          FFFFFE28        -472  args=2 r=1  (usage 3)
+str_Ptr                           FFFFFE2A        -470  args=1 r=1  (usage 3)
+str_PutByte                       FFFFFE23        -477  args=2 r=0  (usage 9)
+sys_GetTimeVar                    FFFFFDEF        -529  args=4 r=0  (usage 3)
+sys_T                             FFFFFE79        -391  args=0 r=1  (usage 18)
+txt_Set                           FFFFFFEF         -17  args=2 r=0  (usage 24)
+uadd_3232                         FFFFFFB9         -71  args=3 r=1  (usage 3)
+udiv_3232                         FFFFFFB6         -74  args=3 r=1  (usage 9)
+umul_1616                         FFFFFFB7         -73  args=3 r=1  (usage 12)
+
+[USER FUNCTIONS]
+calculateNumber15Ptr              00000BFE  args=1 r=0  (usage 3)
+calculateRibbon15Ptr              00000C74  args=1 r=0  (usage 3)
+calculateRibbonZeroPtr            00000CBC  args=1 r=0  (usage 3)
+cleanReadBuffer                   000026A3  args=0 r=0  (usage 12)
+delayDisplay                      00000395  args=0 r=0  (usage 15)
+dispatch                          000024B4  args=2 r=0  (usage 3)
+displayAlert                      00001C04  args=3 r=0  (usage 6)
+displayAlt                        00000789  args=1 r=0  (usage 15)
+displayDI                         00000AFA  args=1 r=0  (usage 17)
+displayDigit                      00000B9C  args=3 r=0  (usage 24)
+displayGaugeDigit                 00001BF7  args=3 r=0  (usage 42)
+displayGaugeFrames                0000214E  args=0 r=0  (usage 3)
+displayGaugeNumbers               00001DF1  args=4 r=0  (usage 6)
+displayGauges                     00001FDB  args=0 r=0  (usage 48)
+displayLargeDigit                 00000B4E  args=3 r=0  (usage 12)
+displayLinearGauge                00001CEB  args=2 r=0  (usage 3)
+displayReferences                 00000469  args=0 r=0  (usage 3)
+displayRibbon                     00000C4A  args=1 r=0  (usage 3)
+displayRibbon22                   00000B28  args=1 r=0  (usage 3)
+displayRibbonZero                 00000C1A  args=1 r=0  (usage 3)
+displayRoundGauge                 00001EF9  args=2 r=0  (usage 6)
+displaySign                       00000744  args=3 r=0  (usage 9)
+displaySmallGaugeNumbers          00001EB2  args=5 r=0  (usage 9)
+displaySpeed                      00000A73  args=1 r=0  (usage 18)
+displaySpeedScale                 000002AC  args=1 r=0  (usage 3)
+displayTime                       000003BA  args=0 r=0  (usage 48)
+displayVario                      00000598  args=2 r=0  (usage 12)
+efisFrame                         000010D7  args=2 r=0  (usage 30)
+EFISFrameInit                     000010AE  args=0 r=0  (usage 3)
+gaugeTexts                        00001A25  args=0 r=0  (usage 3)
+initLine                          000026CC  args=0 r=0  (usage 3)
+initSerial                        000026E0  args=0 r=0  (usage 3)
+pitchFrameOffset                  00000DF5  args=1 r=0  (usage 6)
+preComputedArraysInit             00000EA3  args=0 r=0  (usage 3)
+prevValuesInit                    00000F36  args=0 r=0  (usage 3)
+readLine0                         00002538  args=0 r=0  (usage 3)
+readLine1                         000023F7  args=0 r=0  (usage 3)
+readOneSerialLine                 00002397  args=0 r=0  (usage 3)
+ribbonInit                        00001066  args=0 r=0  (usage 3)
+rollFrameOffset                   00000D01  args=1 r=0  (usage 6)
+sanitizeGauges                    000019BD  args=0 r=0  (usage 48)
+setOnOffState                     00000F0D  args=0 r=0  (usage 48)
+updateVario                       0000064C  args=1 r=0  (usage 12)
+
+[GLOBAL VARIABLES]
+alertStates                         8044  word[12]   (usage 9)
+altitude                            8073  word       (usage 9)
+comBuffer0                             2  word[1024]   (usage 14)
+comBuffer1                          1026  word[1024]   (usage 8)
+currentLine                         2153  word       (usage 8)
+frame                               2213  word[2]   (usage 10)
+gaugesValues                        8032  word[12]   (usage 93)
+gMeter                              8076  word       (usage 3)
+heading                             8078  word       (usage 10)
+hnd22                               2208  word       (usage 12)
+hndEFIS                             2209  word[2]   (usage 24)
+hndl                                   1  word       (usage 33)
+hours                               8061  word       (usage 18)
+isEmpty0                            2177  word       (usage 12)
+line                                2155  word       (usage 3)
+line1                               2052  word[101]   (usage 6)
+lineCpt0                            2050  word       (usage 20)
+lineCpt1                            2051  word       (usage 20)
+lineFieldCpt                        2178  word       (usage 9)
+minutes                             8062  word       (usage 18)
+msecs                               8064  word       (usage 3)
+number15Ptr                         7987  word[10]   (usage 6)
+onOffState                          8057  word       (usage 18)
+onOffTime                           8056  word       (usage 9)
+pitch                               8074  word       (usage 85)
+prevAlt                             8017  word       (usage 18)
+prevAltHundreds                     7874  word[2]   (usage 6)
+prevAltTenth                        7876  word       (usage 3)
+prevAltTime                         8018  word       (usage 9)
+prevDisplayT                        8070  word       (usage 15)
+prevHeading                         8069  word       (usage 9)
+prevPitch                           8066  word       (usage 9)
+prevPitchFrameOffset                8067  word       (usage 9)
+prevRoll                            8065  word       (usage 9)
+prevRollFrameOffset                 8068  word       (usage 9)
+prevSpeedOffset                     8071  word       (usage 3)
+prevValues                          7783  word[91]   (usage 181)
+prevVario                           8021  word[10]   (usage 36)
+ribbon15                            2218  word[4440]   (usage 12)
+ribbon15Ptr                         7877  word[100]   (usage 6)
+ribbonZero                          6658  word[1125]   (usage 6)
+ribbonZeroPtr                       7977  word[10]   (usage 6)
+roll                                8075  word       (usage 76)
+rollFrame                           2215  word[2]   (usage 9)
+rollZeroFrame                       2211  word[2]   (usage 6)
+seconds                             8063  word       (usage 18)
+sign                                2217  word       (usage 3)
+slip                                8077  word       (usage 3)
+speed                               8072  word       (usage 9)
+strBuff0                            2156  word[20]   (usage 6)
+strPtr0                             2176  word       (usage 15)
+vario                               8019  word       (usage 20)
+varioRollingIndex                   8031  word       (usage 15)
+varioSign                           8020  word       (usage 26)
+X                                   2179  word[2]   (usage 6)
+Y                                   2181  word[2]   (usage 6)
+
+[PRIVATE VARIABLES]
+
+[DATA]
+0007: 01 00 01 00 00 00 01 00 00 00 01 00 00 00 00 00     ................
+0017: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+0027: 00 00 00 00 00 00 01 00 01 00 01 00 4D 02 DC 02     ............M.Ü.
+0037: 4D 02 DC 02 6E 02 9A 02 1C 02 F4 02 C7 02 52 02     M.Ü.n.š...ô.Ç.R.
+0047: 9A 02 4D 00 4D 00 EC 00 EC 00 48 01 48 01 48 01     š.M.M.ì.ì.H.H.H.
+0057: 48 01 48 01 BA 01 BA 01 00 00 0A 00 14 00 32 00     H.H.º.º.......2.
+0067: 1E 00 00 00 00 00 00 00 50 00 32 00 70 FE 26 02     ........P.2.pþ&.
+0077: 64 00 78 00 2C 01 96 00 84 03 32 00 96 00 B4 00     d.x.,.–.„.2.–.´.
+0087: 78 00 8A 02 F4 01 00 00 62 00 FA 00 78 00 C4 FF     x.Š.ô...b.ú.x.Äÿ
+0097: FA FF 00 00 8D FF BA FF 58 02 95 00 73 00 A0 00     úÿ..ÿºÿX.•.s. .
+00A7: E1 00 46 00 5D 00 58 00 21 00 41 00 73 00 8C 00     á.F.].X.!.A.s.Œ.
+00B7: 12 01 22 01 F5 00 0E 01 19 00 37 00 1E 00 14 00     ..".õ.....7.....
+00C7: 20 00 6E 00 00 00 20 FD BE F7 1F 00 E0 07 1F 00      .n... ý¾÷..à...
+00D7: 00 F8 20 FD E0 07 00 F8 00 F8 E0 07 E0 07 E0 07     .ø ýà..ø.øà.à.à.
+00E7: 20 FD E0 07 E0 07 BE F7 20 FD E0 07 E0 07 00 F8      ýà.à.¾÷ ýà.à..ø
+00F7: BE F7 00 F8 00 F8 00 F8 E0 07 BE F7 00 F8 00 F8     ¾÷.ø.ø.øà.¾÷.ø.ø
+0107: 00 F8 1E 00 22 00 26 00 2A 00 2E 00 32 00 36 00     .ø..".&.*...2.6.
+0117: 3A 00 3E 00 42 00 46 00 1F 00 23 00 27 00 2B 00     :.>.B.F...#.'.+.
+0127: 2F 00 33 00 37 00 3B 00 3F 00 43 00 47 00 20 00     /.3.7.;.?.C.G. .
+0137: 24 00 28 00 2C 00 30 00 34 00 38 00 3C 00 40 00     $.(.,.0.4.8.<.@.
+0147: 44 00 48 00 21 00 25 00 29 00 2D 00 31 00 35 00     D.H.!.%.).-.1.5.
+0157: 39 00 3D 00 41 00 45 00 49 00 50 00 51 00 52 00     9.=.A.E.I.P.Q.R.
+0167: 53 00 54 00 55 00 56 00 57 00 58 00 59 00 5A 00     S.T.U.V.W.X.Y.Z.
+0177: D9 03 61 03 88 02 7A 01 04 01 C3 00 00 00 0E 01     Ù.a.ˆ.z...Ã.....
+0187: 77 00 04 01 00 00 25 03 1B 03 11 03 07 03 2F 03     w.....%......./.
+0197: 51 4E 48 00 54 49 4D 45 00 4B 54 53 00 46 45 45     QNH.TIME.KTS.FEE
+01A7: 54 00 50 6C 65 61 73 65 20 69 6E 73 65 72 74 20     T.Please insert 
+01B7: 53 44 20 63 61 72 64 00 44 72 69 76 65 20 6E 6F     SD card.Drive no
+01C7: 74 20 6D 6F 75 6E 74 65 64 2E 2E 2E 00 45 46 49     t mounted....EFI
+01D7: 53 38 2E 64 61 74 00 45 46 49 53 38 2E 67 63 69     S8.dat.EFIS8.gci
+01E7: 00 72 69 62 62 6F 6E 32 32 2E 64 61 74 00 72 69     .ribbon22.dat.ri
+01F7: 62 62 6F 6E 32 32 2E 67 63 69 00 72 61 77 30 2E     bbon22.gci.raw0.
+0207: 64 61 74 00 72 61 77 31 2E 64 61 74 00 52 50 4D     dat.raw1.dat.RPM
+0217: 00 45 47 54 00 57 41 54 45 52 00 54 55 52 42 4F     .EGT.WATER.TURBO
+0227: 00 6D 69 6E 2D 31 00 64 65 67 2E 20 43 00 6D 62     .min-1.deg. C.mb
+0237: 61 72 00 20 54 2E 00 4F 49 4C 00 20 50 2E 00 46     ar. T..OIL. P..F
+0247: 75 65 6C 00 41 6D 70 2E 00 56 6F 6C 74 73 00 BA     uel.Amp..Volts.º
+0257: 23 C6 23 D2 23 FD FF FE FF FF FF 0A 00 0D 00 4A     #Æ#Ò#ýÿþÿÿÿ....J
+0267: 24 4A 24 2B 24 71 24 68 24 85 24 CF 24 D9 24 E3     $J$+$q$h$…$Ï$Ù$ã
+0277: 24 ED 24 F7 24 01 25 0B 25 15 25 FD FF FE FF FF     $í$÷$.%.%.%ýÿþÿÿ
+0287: FF 09 00 0A 00 0D 00 20 00 2C 00 3A 00 3B 00 B1     ÿ...... .,.:.;.±
+0297: 25 A4 25 74 25 F5 25 D9 25 E2 25 F5 25 F5 25 F5     %¤%t%õ%Ù%â%õ%õ%õ
+02A7: 25 F5 25 4F 26                                      %õ%O&
+
+[__MAXPROG]
+32750
+[__MAXMEM]
+32768
+
+[PROGRAM]
+main
+[CODESIZE]
+9965
+[MEMSIZE]
+8078
+[ARGCOUNT]
+0
+[RETURNS]
+NO
+[STACKSIZE]
+0 (AUTO)
+[STACK_ESTIMATE]
+378   (nb:- worst case estimate)
+[MODE]
+0
+
+[PROJECT]
+E:\EFIS8.4dg
+C:\Program Files\4D Labs\4D Workshop 4 IDE\include\Gen4-uLCD-70D-CLB.fnc
+C:\Program Files\4D Labs\4D Workshop 4 IDE\include\Diablo16_Functions.fnc
+C:\Program Files\4D Labs\4D Workshop 4 IDE\include\4DGL_16bitColours.fnc
+C:\Program Files\4D Labs\4D Workshop 4 IDE\include\VisualConst.inc
+E:\EFIS8.4DWork\EFIS8Const.inc
+E:\EFIS8.4DWork\Serial.inc
+E:\EFIS8.4DWork\Gauges.inc

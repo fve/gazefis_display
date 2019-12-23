@@ -1,0 +1,1263 @@
+#platform "Gen4-uLCD-70D-CLB"
+
+
+// Program Skeleton 1.3 generated 13/05/2018 09:29:21
+
+#inherit "4DGL_16bitColours.fnc"
+#inherit "VisualConst.inc"
+#inherit "EFIS8Const.inc"
+
+#inherit "Serial.inc"
+#inherit "Gauges.inc"
+
+
+#constant TRUE      1
+#constant FALSE    0
+#constant MEDIANX   141
+#constant MEDIANY   141
+#constant RADIUS    141
+#constant NEGRADIUS -141
+#constant HTOP      38
+#constant IMGX1     140
+#constant HBOT      237
+#constant HLEFT     38
+#constant IMGY1      95
+#constant HRIGHT    237
+#constant DIAMETER  199
+#constant RIBONSIZE15  4440
+#constant RIBONSIZE22  9152
+#constant RIBONSIZE15ZERO  1125
+#constant ALT1X     390
+#constant ALT1Y     112
+#constant ALT1YMIN  109
+#constant ALT1YMAX  158
+#constant RIBBONX  390
+#constant ALTHUNDREDSMIDX  375
+#constant ALTHUNDREDSMIDY  112
+#constant ALTTHOUSANDSX  353
+#constant ALTTHOUSANDSY  106
+#constant ALTTENTHOUSANDSX 331
+#constant GAUGEANGLE 225
+
+#constant SIGNX 331
+#constant SIGNY 122
+#constant SIGNHLX 359
+#constant SIGNHY 39
+#constant SIGNLY 202
+
+#constant ALTHY  28
+#constant ALTLY  191
+#constant ALTHLX0 387
+#constant ALTHLX1 370
+#constant ALTHLX2 353
+#constant SPEED2X  31
+#constant SPEED1X  53
+#constant SPEEDY  106
+#constant RIBBONY  112
+#constant RIBBON22X  75
+#constant RIBBON22Y  107
+#constant ALTY1  22
+#constant ALTX1  423
+#constant ALTX2  435
+#constant ALTREF 33
+#constant PREVSPEED2 0
+#constant PREVSPEED1 1
+#constant PREVSPEED0 2
+#constant PREVALT00 15
+#constant PREVALT0 3
+#constant PREVALT1 4
+#constant PREVALT2 5
+#constant PREVALT3 6
+#constant PREVALTH0 13
+#constant PREVALTH1 16
+#constant PREVALTH2 17
+#constant PREVALTL0 14
+#constant PREVALTL1 18
+#constant PREVALTL2 19
+#constant PREVQNH0 7
+#constant PREVQNH1 8
+#constant PREVQNH2 9
+#constant PREVQNH3 10
+#constant PREVVARIO 11
+#constant PREVHEADING 12
+#constant PREVSIGN 20
+#constant PREVSIGNH 21
+#constant PREVSIGNL 22
+#constant PREVVARIOSIGN 24
+#constant FLASH 300
+#constant GAUGELEN 100
+#constant SPEEDSLEN 240
+
+
+
+
+
+var X[2] ;      // Horizon Line X1 X2
+var Y[2] ;      // Horizon line Y1 Y2
+var topX[5] ;   // Horizon top polygon X list
+var topY[5] ;   // Horizon top polygon Y list
+var topColor ;  // Horizon top polygon color (blue or brown)
+var topN ;      // Horizon top polygon number of points
+var botX[5] ;   // Horizon bottom polygon X list
+var botY[5] ;   // Horizon bottom polygon X list
+var botColor ;  // Horizon bottom polygon color (blue or brown)
+var botN ;      // Horizon bottom polygon number of points
+var hnd1, hnd22 ;
+var hndEFIS[2];   // handle to EFIS image controls
+var rollZeroFrame[2] ; // zero roll pitch frame High/Low
+var frame[2] ; // current frame in AI  / High/Low
+var rollFrame[2] ; // Roll frame offset
+var sign ; // 1 for positive attitudes,  -1 for negative ones
+var ribbon15[RIBONSIZE15];
+var ribbonZero[RIBONSIZE15ZERO];
+var prevValues[91];
+var prevAltHundreds[2];
+var prevAltTenth;
+var ribbon15Ptr[100];
+var ribbonZeroPtr[10];
+var number15Ptr[10];
+var number10Ptr[10];
+var number10REDPtr[10];
+var prevAlt, prevAltTime;
+var vario, varioSign;
+var prevVario[10] ; // For rolling average (filter)
+var varioRollingIndex ;
+var gaugesValues[12];
+var alertStates[12];
+var onOffTime, onOffState ;
+var qnh, flightLevelMode, headingDelta ;
+var hours, minutes, seconds, msecs ;
+var prevRoll, prevPitch, prevPitchFrameOffset, prevRollFrameOffset, prevHeading ;
+var prevDisplayT, prevSpeedOffset;
+
+
+var speed, altitude, pitch, roll, gMeter, slip, heading;
+
+
+
+#DATA
+// RPM EGT T=EAU P=TURBO T=HUILE P=HUILE FUEL AMP VOLT BACKUP T=EXT
+
+    word addZero
+       1,   1,   0,   1,   0,   1,   0,   0,   0,   0,   0
+    word addDot
+       0,   0,   0,   0,   0,   0,   0,   0,   1,   1,   1
+    word gaugeX
+     589, 732, 589, 732, 622, 666, 540, 756, 711, 594, 666
+    word gaugeY
+      77,  77, 236, 236, 328, 328, 328, 328, 328, 442, 442
+    word gaugeMin
+       0,  10,  20,  50,  30,   0,   0,   0,  80,  50,-400
+    word gaugeMax
+     550, 100, 120, 300, 150, 900,  50, 150, 180, 120, 650
+    word gaugeAlert
+     500,   0, 98,  250, 120, -60,  -6,   0,-115, -70, 600
+    word gaugeFirstColorLastValue
+    149, 115,  160, 225,  70,  93,  88,  33,  65, 115, 140
+    word gaugeSecondColorLastValue
+    274, 290,  245, 270,  25,  55,  30,  20,  32, 110,   0
+    word gaugeFirstColor
+    ORANGE,WHITESMOKE,BLUE,
+           LIME,BLUE, RED,ORANGE,LIME, RED, RED
+    word gaugeSecondColor
+    LIME,LIME,
+      LIME,ORANGE,LIME,LIME,WHITESMOKE,ORANGE,LIME,LIME
+    word gaugeThirdColor
+      RED,WHITESMOKE,
+         RED,RED,RED,LIME,WHITESMOKE,RED, RED, RED
+    word prevDigit0
+    30,34,38,42,46,50,54,58,62,66,70
+    word prevDigit1
+    31,35,39,43,47,51,55,59,63,67,71
+    word prevDigit2
+    32,36,40,44,48,52,56,60,64,68,72
+    word prevDigit3
+    33,37,41,45,49,53,57,61,65,69,73
+    word prevAlert
+    80,81,82,83,84,85,86,87,88,89,90
+    word speedY
+//  Grey Start White Green Yellow, Red
+    985, 865  , 648  ,378,  260,  195
+    word speedYDelta
+      0  , 270  ,119,  260,    0
+#END
+
+
+
+
+
+
+func main()
+//  var hstrings ; // Handle to access uSD strings, uncomment if required
+//  var hFontx ;   // Handle to access uSD fonts, uncomment if required and change n to font number
+//  Uncomment the following if uSD images, fonts or strings used.
+
+    while(!media_Init())
+        gfx_Cls();
+        pause(300);
+        putstr("Please insert SD card") ;
+        pause(300);
+    wend
+
+    if (!(file_Mount()))
+        while(!(file_Mount()))
+            putstr("Drive not mounted...");
+            pause(200);
+            gfx_Cls();
+            pause(200);
+        wend
+    endif
+//    gfx_TransparentColour(0x0020);    // uncomment if transparency required
+//    gfx_Transparency(ON);             // uncomment if transparency required
+
+    //hFontn := file_LoadImageControl("EFIS8.dan", "EFIS8.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
+    //hstrings := file_Open("EFIS8.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
+
+
+    // pause(2000);
+    // gfx_Contrast(15) ;
+
+    gfx_Set(SCREEN_MODE,LANDSCAPE) ;
+
+    hndl := file_LoadImageControl("EFIS8.dat", "EFIS8.gci", 1);
+    hnd22 := file_LoadImageControl("ribbon22.dat", "ribbon22.gci", 1);
+    hndEFIS[0] := file_LoadImageControl("raw0.dat", "", 2);
+    hndEFIS[1] := file_LoadImageControl("raw1.dat", "", 2);
+
+    ribbonInit() ;
+    EFISFrameInit() ;
+    prevValuesInit() ;
+    preComputedArraysInit();
+    displayGaugeFrames() ;
+    displayDI(0) ;
+    displaySpeed(100) ;
+    displayAlt(5500) ;
+    displayReferences();
+    initSerial() ;
+
+    gaugesValues[0]  := 460 ; // RPM
+    gaugesValues[1]  :=  70 ; // EGT
+    gaugesValues[2]  :=  70 ; // EAU
+    gaugesValues[3]  := 195 ; // TURBO
+    gaugesValues[4]  :=  95 ; // T HUILE
+    gaugesValues[5]  := 350 ; // P HUILE
+    gaugesValues[6]  :=  47 ; // FUEL
+    gaugesValues[7]  :=   5 ; // AMP
+    gaugesValues[8]  := 138 ; // VOLT
+    gaugesValues[9]  :=  90 ; // BACKUP
+    gaugesValues[10] := 255 ; // T EXT
+
+
+    txt_Set(FONT_ID,4);
+
+
+
+    var frame ;
+
+    var value ;
+    var slow ;
+    var rpm ;
+    var count ;
+    var newData ;
+
+
+    prevDisplayT := sys_T() ;
+
+    displaySpeed(0) ;
+    displayAlt(0) ;
+
+    repeat
+        readOneSerialLine() ;
+
+        // if ( !delayDisplay() )
+            displaySpeed(speed) ;
+            displayAlt(altitude) ;
+            updateVario(altitude) ;
+            displayVario(vario, varioSign) ;
+            efisFrame(pitch, roll) ;
+            displayDI(heading) ;
+            sanitizeGauges();
+            displayGauges() ;
+            setOnOffState() ;
+        displayTime() ;
+        // endif
+
+    forever
+
+
+
+    repeat
+
+        for ( value := 190; value <= 2000 ; value++  )
+            for ( slow := 0; slow <= 3200 ; slow++   )
+            next
+            if ( delayDisplay() )
+                continue ;
+            endif
+            displaySpeed(value) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+
+        next
+        for ( value := 1700; value >= 0 ; value--  )
+            for ( slow := 0; slow <= 1000 ; slow++   )
+            next
+            if ( delayDisplay() )
+                continue ;
+            endif
+            displaySpeed(value) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+
+        next
+
+    forever
+
+
+    repeat
+        prevDisplayT := sys_T() ;
+        for ( rpm := 0; rpm <= 510;  rpm := rpm + 1)
+            for ( slow := 0; slow <= 250 ; slow++   )
+            next
+            if ( delayDisplay() )
+                continue ;
+            endif
+            gaugesValues[0]  := rpm ; // RPM
+            // displaySpeed(value) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        for ( slow := 0; slow <= 600 ; slow++   )
+            gaugesValues[0]  := 510; // RPM
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        for ( rpm := 510; rpm >= 410;  rpm := rpm - 1)
+            for ( slow := 0; slow <= 500 ; slow++   )
+            next
+            gaugesValues[0]  := rpm ; // RPM
+            if ( delayDisplay() )
+                continue ;
+            endif
+            // displaySpeed(value) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        for ( value := 1200; value <= 1300 ; value++  )
+            for ( slow := 0; slow <= 1000 ; slow++   )
+
+            next
+            if ( delayDisplay() )
+                continue ;
+            endif
+            displaySpeed(value) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+
+        for ( pitch := 0; pitch <= 200 ; pitch++ )
+            efisFrame(0, pitch) ;
+            displayDI(pitch / 20) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        for ( value := 5500; value <= 6000; value++  )
+            for ( slow := 0; slow <= 0 ; slow++   )
+
+            next
+            efisFrame(MIN((value - 5500), 100), 200 ) ;
+            displayDI(((value-5500)/10)%360) ;
+            displayAlt(value) ;
+            updateVario(value) ;
+            displayVario(vario, varioSign) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        for ( value := 6001; value <= 6200; value++  )
+            for ( slow := 0; slow <= 5000 ; slow++   )
+
+            next
+            efisFrame(100, 200 ) ;
+            displayDI(((value-5500)/10)%360) ;
+            displayAlt(value) ;
+            updateVario(value) ;
+            displayVario(vario, varioSign) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+
+
+        // Loop: Climb
+        for ( pitch := 0; pitch <= 26 ; pitch++ )
+            efisFrame(-1*pitch*pitch, 0) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+            updateVario(6200) ;
+            displayVario(vario, varioSign) ;
+        next
+        // Loop: reverse
+        for ( pitch := 26; pitch >= 0; pitch-- )
+            efisFrame(-1*pitch*pitch, 1800) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        // Loop: descend
+        for ( pitch := 1; pitch <= 26; pitch++ )
+            efisFrame(pitch*pitch, 1800) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        // Loop: stabilize
+        for ( pitch := 26; pitch >= 0; pitch-- )
+            efisFrame(-1*pitch*pitch, 0) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+        next
+        // Roll right
+        for ( roll := 0; roll <= 1800;  roll := roll + 5)
+            efisFrame(0, roll) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+            if ( ABS(roll) > 1650 )
+                roll := roll + 5;
+            else
+                if ( ABS(roll) > 610 )
+                    roll := roll + 15;
+                endif
+            endif
+        next
+        for ( roll := -1795; roll <= 0;  roll := roll + 5)
+            efisFrame(0, roll) ;
+            setOnOffState() ;
+            sanitizeGauges();
+            displayGauges() ;
+            displayTime() ;
+            if ( ABS(roll) > 1650 )
+                roll := roll + 5;
+            else
+                if ( ABS(roll) > 610 )
+                    roll := roll + 15;
+                endif
+            endif
+        next
+    forever
+
+endfunc
+
+func efisFrame(var pitch, var roll)
+    var newPitchFrameOffset, newRollFrameOffset ;
+
+    if ( pitch == prevPitch && roll == prevRoll )
+        return 0 ;
+    endif
+
+    prevPitch := pitch ;
+    prevRoll := roll ;
+
+    newPitchFrameOffset := pitchFrameOffset(pitch) ;
+    newRollFrameOffset := rollFrameOffset(roll) ;
+
+    if ( newPitchFrameOffset == prevPitchFrameOffset && newRollFrameOffset == prevRollFrameOffset )
+        return 0 ;
+    endif
+
+    prevPitchFrameOffset := newPitchFrameOffset ;
+    prevRollFrameOffset := newRollFrameOffset ;
+
+
+    umul_1616(rollZeroFrame, pitchFrameOffset(pitch), 378);
+    rollFrame[0] := rollFrameOffset(roll) ;
+    rollFrame[1] := 0 ;
+    uadd_3232(frame, rollZeroFrame, rollFrame);
+
+
+    // Now frame contains the frame ( < 65535 )
+    if ( pitch <= 0 )
+        img_SetPosition(hndEFIS[0], 0x00000000,  114,20);
+        img_SetWord(hndEFIS[0], 0x00000000, IMAGE_INDEX, frame[0]) ; // where frame is 0 to 272
+        img_Show(hndEFIS[0],0x00000000) ;
+    else
+        img_SetPosition(hndEFIS[1], 0x00000000,  114,20);
+        img_SetWord(hndEFIS[1], 0x00000000, IMAGE_INDEX, frame[0]) ; // where frame is 0 to 272
+        img_Show(hndEFIS[1],0x00000000) ;
+    endif
+
+    return 1 ;
+endfunc
+
+
+func EFISFrameInit()
+
+    img_SetWord(hndl, iEFISFrame, IMAGE_INDEX, 0) ; // where frame is 0 to 272
+    img_Show(hndl,iEFISFrame) ;
+    gfx_RectangleFilled(0,0,12,239,BLACK) ;
+
+endfunc
+
+func ribbonInit()
+
+    //img_SetWord(hndl, ialtfeetribonsmall, IMAGE_INDEX, 0) ; // where frame is 0 to 272
+    //img_Show(hndl,ialtfeetribonsmall) ;
+    //gfx_ReadGRAMarea(500,100,514,395,ribbon15);
+
+    img_SelectReadPosition(hndl, ialtfeetribonsmall, 0, 0,0); // Position in image file   / number22Delta[value]
+    img_SequentialRead(RIBONSIZE15, ribbon15) ;
+
+
+    img_SetWord(hndl, iribbonzero, IMAGE_INDEX, 0) ; // where frame is 0 to 272
+    img_Show(hndl,iribbonzero) ;
+    gfx_ReadGRAMarea(542,100,556,174,ribbonZero);
+
+endfunc
+
+func prevValuesInit()
+    var value ;
+    prevAltTenth := 200; // Will force recomputation
+    prevAltHundreds[0] := ALTY1 ;
+    prevAltHundreds[1] := ALTY1 + ( 3 * ALTREF ) ;
+    // Initialize previous values table
+    for ( value := 0; value < 80; value++ )
+        prevValues[value] := -2 ;
+    next
+    for ( value := 80; value <= 90; value++ )
+        prevValues[value] := -9999 ;
+    next
+    prevAlt := -10000 ;
+    prevAltTime := -1 ;
+    vario := 0 ;
+    varioSign := 1 ;
+    for ( value := 0; value < 10; value++ )
+        prevVario[value] := 0 ;
+    next
+    varioRollingIndex := 0 ;
+    onOffTime := 0 ;
+    onOffState := 0 ;
+    for ( value := 0; value <= 10; value++ )
+        alertStates[value] := 0 ;
+    next
+    prevRoll := -10000 ;
+    prevPitch := -10000 ;
+    prevPitchFrameOffset := -10000 ;
+    prevRollFrameOffset := -10000 ;
+    prevHeading := 1 ;
+    prevDisplayT := sys_T() ;
+    prevSpeedOffset := -1 ;
+endfunc
+
+func setOnOffState()
+    var now ;
+
+    now := sys_T() ;
+    if ( now - onOffTime > FLASH )
+        onOffState := 1 - onOffState ;
+        onOffTime := now ;
+    endif
+endfunc
+
+func preComputedArraysInit()
+    var value;
+    for ( value := 0; value < 100; value++ )
+        ribbon15Ptr[value] := calculateRibbon15Ptr(value) ;
+    next
+    for ( value := 0; value < 10; value++ )
+        ribbonZeroPtr[value] := calculateRibbonZeroPtr(value) ;
+        number15Ptr[value] := calculateNumber15Ptr(value) ;
+    next
+endfunc
+
+func pitchFrameOffset(var pitch)
+    var decimale ;
+    var degrees ;
+    var absPitch ;
+    var pixelsCount ;
+    var tmp ;
+    absPitch := ABS(pitch) ;
+    decimale := absPitch % 10 ;
+    degrees :=  absPitch / 10 ;
+
+    pixelsCount := 0 ;
+
+    // putnumXY(400, 60, DEC5, absPitch) ;
+    // putnumXY(400, 80, DEC5, degrees) ;
+    // putnumXY(400, 100, DEC5, decimale) ;
+
+
+
+    if ( absPitch > 660 )
+        // Max 66° displayed
+        degrees := 66 ;
+        decimale := 0 ;
+        absPitch := 660 ;
+    endif
+
+    if ( absPitch > 360 )
+        // One frame every 2 degrees
+        pixelsCount := pixelsCount + ((degrees - 36) / 2) ;
+        // putnumXY(400, 210, DEC5, ((degrees - 30 + 1) / 3) ) ;
+        degrees := 36 ;
+        decimale := 0 ;
+        absPitch := 360 ;
+    endif
+
+    /*
+    if ( absPitch > 200 )
+        // One frame every degree
+        pixelsCount := pixelsCount +  ((absPitch - 200 + 5) / 10) ;
+        putnumXY(400, 220, DEC5, (absPitch - 200 + 5) / 10) ;
+        degrees := 20 ;
+        decimale := 0 ;
+        absPitch := 200 ;
+    endif
+    */
+
+
+    // 3 pixels per degree, 3 frames per degree
+    pixelsCount := pixelsCount +  degrees * 3 ;
+    // putnumXY(400, 240, DEC5, degrees * 3) ;
+    if ( decimale >= 8 )
+        // Next angle
+        pixelsCount := pixelsCount +  1 ;
+        // putnumXY(400, 260, DEC5, 1) ;
+    endif
+    if ( decimale >= 5 )
+        // Next angle
+        pixelsCount := pixelsCount +  1 ;
+        // putnumXY(400, 280, DEC5, 1) ;
+    endif
+    if ( decimale >= 2 )
+        // Next angle
+        pixelsCount := pixelsCount + 1 ;
+        // putnumXY(400, 300, DEC5, 1) ;
+    endif
+
+    // putnumXY(400, 120, DEC5, pixelsCount) ;
+
+    return pixelsCount ;
+endfunc
+
+
+func rollFrameOffset(var roll)
+    var decimale ;
+    var degrees ;
+    var absRoll ;
+    var offsetSign ;
+    var pixelsCount ;
+    var tmp ;
+
+
+    pixelsCount := 0 ;
+
+    // Sign and sanitization
+    if ( roll >= 0 )
+        offsetSign := 0  ;
+        if ( roll > 1800 )
+            roll := 1800 ;
+        endif
+    else
+        if ( roll > -5 )
+            // Idem 0
+            roll := 0 ;
+            offsetSign := 0 ;
+        else
+            offsetSign := 189 ;   // 190 positive frames, but negatives start at minus 0.5°
+            if ( roll < -1790 )   // -1790
+                roll := 1800 ;
+                offsetSign := 0  ;
+            endif
+        endif
+    endif
+
+    // Absolute value and degrees / decimals
+    absRoll := ABS(roll) ;
+    decimale := absRoll % 10 ;
+    degrees :=  absRoll / 10 ;
+
+
+
+
+    if ( absRoll >= 1650 )
+        // One frame every degrees starting at 165°
+        pixelsCount := pixelsCount + (degrees - 165 + 1) ;
+        // putnumXY(400, 210, DEC5, (degrees - 161 + 1) ) ;
+        degrees := 163 ;
+        decimale := 0 ;
+        absRoll := 1630 ;
+    endif
+
+    if ( absRoll > 610  )
+        // One frame every 2 degree starting at 63 (after 61)
+        pixelsCount := pixelsCount +  ((degrees - 61 ) / 2) ;
+        // putnumXY(400, 220, DEC5, (absRoll - 680 + 3) / 3) ;
+        degrees := 61 ;
+        decimale := 0 ;
+        absRoll := 610 ;
+    endif
+
+    // if ( absRoll >= 460 )
+        // One frame every degrees
+    //    pixelsCount := pixelsCount + (degrees - 46 + 1) ;
+        // putnumXY(400, 210, DEC5, (degrees - 46 + 1) ) ;
+    //    degrees := 45 ;
+    //    decimale := 0 ;
+    //    absRoll := 450 ;
+    // endif
+
+    // 2 frames per degree
+    pixelsCount := pixelsCount +  degrees * 2 ;
+    // putnumXY(400, 240, DEC5, degrees * 2) ;
+    if ( decimale >= 5 )
+        // Next angle
+        pixelsCount := pixelsCount +  1 ;
+        // putnumXY(400, 260, DEC5, 1) ;
+    endif
+
+
+    // putnumXY(500, 120, DEC5, pixelsCount) ;
+
+    return pixelsCount + offsetSign ;
+endfunc
+
+/*
+func calculateRibbonZeroPtr(var tenth)
+    var pZero ;
+
+    pZero := ribbonZero ;
+
+
+        if ( tenth < 5 )
+            pZero += (25- 10 - ( tenth * 25 / 10 ) ) * 15 ;
+        else
+            pZero += (50 - 10 - ( tenth * 25 / 10 ) ) * 15 ;
+        endif
+
+
+    return pZero;
+endfunc
+
+
+func calculateRibbon15Ptr(var valueTenth)
+    var p;
+
+
+    p := ribbon15 ;
+
+    if ( valueTenth < 95 )
+        p += (250 - 10 - ( valueTenth * 25 / 10) ) * 15 ;
+    else
+        p += (250 + 250 - 10  - ( valueTenth * 25 / 10 ) ) * 15;
+    endif
+
+
+    return p;
+endfunc
+
+func displayRibbon(var valueTenth)
+    gfx_WriteGRAMarea(RIBBONX, RIBBONY - 10,RIBBONX+15-1, RIBBONY+40-10-1, ribbon15Ptr[valueTenth]);
+endfunc
+
+func displayRibbonZero(var valueTenth)
+    gfx_WriteGRAMarea(RIBBONX+15, RIBBONY - 10,RIBBONX+15+15-1, RIBBONY+40- 10-1, ribbonZeroPtr[valueTenth]);
+endfunc
+
+*/
+
+func calculateRibbonZeroPtr(var tenth)
+    var pZero ;
+
+    pZero := ribbonZero ;
+
+
+        if ( tenth < 5 )
+            pZero += (25- 15 - ( tenth * 25 / 10 ) ) * 15 ;
+        else
+            pZero += (50 - 15 - ( tenth * 25 / 10 ) ) * 15 ;
+        endif
+
+
+    return pZero;
+endfunc
+
+func calculateRibbon15Ptr(var valueTenth)
+    var p;
+
+
+    p := ribbon15 ;
+
+    if ( valueTenth < 95 )
+        p += (250 - 15 - ( valueTenth * 25 / 10) ) * 15 ;
+    else
+        p += (250 + 250 - 15  - ( valueTenth * 25 / 10 ) ) * 15;
+    endif
+
+
+    return p;
+endfunc
+
+
+func displayRibbon(var valueTenth)
+    gfx_WriteGRAMarea(RIBBONX, RIBBONY - 15,RIBBONX+15-1, RIBBONY+50-15-1, ribbon15Ptr[valueTenth]);
+endfunc
+
+func displayRibbonZero(var valueTenth)
+    gfx_WriteGRAMarea(RIBBONX+15, RIBBONY - 15,RIBBONX+15+15-1, RIBBONY+50- 15-1, ribbonZeroPtr[valueTenth]);
+endfunc
+
+
+func calculateNumber15Ptr(var value)
+    var p;
+    p := ribbon15 ;
+    p += (250  - ( value * 25 ) ) * 15 ;
+    return p;
+endfunc
+
+func displayDigit(var X, var Y, var value)
+    if ( value < 0  )
+        gfx_RectangleFilled(X, Y, X+15-1,Y+21-1, BLACK);
+    else
+        var p;
+        p := ribbon15 ;
+        p += (250  - ( value * 25 ) ) * 15 ;
+        gfx_WriteGRAMarea(X, Y ,X+15-1,Y+21-1, number15Ptr[value]);
+    endif
+endfunc
+
+
+
+func displayLargeDigit(var X, var Y, var numberValue)
+    //var X, Y;
+    //X := 500 ;
+    //Y := 200 ;
+    if ( numberValue < 0  )
+        gfx_RectangleFilled(X, Y, X+22-1,Y+31-1, BLACK);
+    else
+        img_SetPosition(hndl, iNumber22,  X, Y) ;
+        img_SetWord(hndl, iNumber22, IMAGE_INDEX, numberValue) ; // where frame is 0 to 90
+        img_Show(hndl,iNumber22) ;
+    endif
+endfunc
+
+
+func displayRibbon22(var valueTenth)
+
+    img_SetWord(hnd22, 0x00000000, IMAGE_INDEX, valueTenth) ; // where frame is 0 to 272
+    img_Enable(hnd22, 0x00000000);
+    img_Show(hnd22,0x00000000) ;
+
+endfunc
+
+func displayDI(var heading)
+    if ( heading == prevHeading )
+        return 0 ;
+    endif
+    prevHeading := heading ;
+    // DI 1.0 generated 16/12/2018 09:17:27
+    img_SetWord(hndl, iDI, IMAGE_INDEX, heading) ; // where frame is 0 to 90
+    img_Show(hndl,iDI) ;
+    return 1 ;
+endfunc
+
+func displayHeading(var heading)
+
+    if ( heading != prevValues[PREVHEADING] )
+        displayDI(heading) ;
+        prevValues[PREVHEADING] := heading ;
+    endif
+
+endfunc
+
+func displaySpeed(var newSpeed)
+    var speed[3] ;
+
+    displaySpeedScale(newSpeed) ;
+
+    speed[0] := newSpeed % 100 ;
+    speed[1] := (newSpeed / 100) % 10 ;
+    speed[2] := (newSpeed / 1000) ;
+
+    if ( speed[2] == 0 )
+        speed[2] := -1 ;
+    endif
+
+    if ( speed[2] != prevValues[PREVSPEED2] )
+        displayLargeDigit( SPEED2X, SPEEDY, speed[2]) ;
+        prevValues[PREVSPEED2] := speed[2] ;
+    endif
+
+    if ( speed[1] != prevValues[PREVSPEED1] )
+        displayLargeDigit( SPEED1X, SPEEDY, speed[1]) ;
+        prevValues[PREVSPEED1] := speed[1] ;
+    endif
+
+    if ( speed[0] != prevValues[PREVSPEED0] )
+        displayRibbon22(speed[0]) ;
+        prevValues[PREVSPEED0] := speed[0] ;
+    endif
+endfunc
+
+func displayAlt(var newAlt)
+    var alt[4], altH[3], altL[3], zeros, hundreds, altLow, altHigh, sign, signL, signH ;
+
+    if ( newAlt < 0 )
+        sign := -1 ;
+        newAlt := ABS(newAlt) ;
+    else
+        sign := 1 ;
+    endif
+    hundreds := (newAlt / 100) ;
+    altHigh  := hundreds + 3    ;
+    if ( altHigh < 0 )
+        signH := -1 ;
+        altHigh := ABS(altHigh) ;
+    else
+        signH := 1 ;
+    endif
+    altLow  := hundreds - 2    ;
+    if ( altLow < 0 )
+        signL := -1 ;
+        altLow := ABS(altLow) ;
+    else
+        signL := 1 ;
+    endif
+    alt[0] := newAlt % 100 ;
+    alt[1] := hundreds % 10 ;
+    alt[2] := (newAlt / 1000) % 10;
+    alt[3] := (newAlt / 10000) ;
+    zeros := alt[0] % 10 ;
+    altH[0] := altHigh % 10 ;
+    altH[1] := (altHigh / 10) % 10 ;
+    altH[2] := (altHigh / 100) ;
+    altL[0] := altLow % 10 ;
+    altL[1] := (altLow / 10) % 10 ;
+    altL[2] := (altLow / 100) ;
+
+    if ( alt[3] == 0 )
+        alt[3] := -1 ;
+        if ( alt[2] == 0 )
+            alt[2] := -1 ;
+            if ( alt[1] == 0 )
+                alt[1] := -1 ;
+            endif
+        endif
+    endif
+    if ( altL[2] == 0 )
+        altL[2] := -1 ;
+        if ( altL[1] == 0 )
+            altL[1] := -1 ;
+        endif
+    endif
+    if ( altH[2] == 0 )
+        altH[2] := -1 ;
+        if ( altH[1] == 0 )
+            altH[1] := -1 ;
+        endif
+    endif
+
+
+
+    if ( altH[2] != prevValues[PREVALTH2] )
+        displayDigit( ALTHLX2, ALTHY, altH[2]) ;
+        prevValues[PREVALTH2] := altH[2] ;
+    endif
+
+    if ( altH[1] != prevValues[PREVALTH1] )
+        displayDigit( ALTHLX1, ALTHY, altH[1]) ;
+        prevValues[PREVALTH1] := altH[1] ;
+    endif
+
+    if ( altH[0] != prevValues[PREVALTH0] )
+        displayDigit( ALTHLX0, ALTHY, altH[0]) ;
+        prevValues[PREVALTH0] := altH[0] ;
+    endif
+
+    if ( altL[2] != prevValues[PREVALTL2] )
+        displayDigit( ALTHLX2, ALTLY, altL[2]) ;
+        prevValues[PREVALTL2] := altL[2] ;
+    endif
+
+    if ( altL[1] != prevValues[PREVALTL1] )
+        displayDigit( ALTHLX1, ALTLY, altL[1]) ;
+        prevValues[PREVALTL1] := altL[1] ;
+    endif
+
+    if ( altL[0] != prevValues[PREVALTL0] )
+        displayDigit( ALTHLX0, ALTLY, altL[0]) ;
+        prevValues[PREVALTL0] := altL[0] ;
+    endif
+
+    if ( alt[3] != prevValues[PREVALT3] )
+        displayLargeDigit( ALTTENTHOUSANDSX, ALTTHOUSANDSY, alt[3]) ;
+        prevValues[PREVALT3] := alt[3] ;
+    endif
+
+    if ( alt[2] != prevValues[PREVALT2] )
+        displayLargeDigit( ALTTHOUSANDSX, ALTTHOUSANDSY, alt[2]) ;
+        prevValues[PREVALT2] := alt[2] ;
+    endif
+
+    if ( alt[1] != prevValues[PREVALT1] )
+        displayDigit( ALTHUNDREDSMIDX, ALTHUNDREDSMIDY, alt[1]) ;
+        prevValues[PREVALT1] := alt[1] ;
+    endif
+
+    if ( alt[0] != prevValues[PREVALT0] )
+        displayRibbon(alt[0]) ;
+        prevValues[PREVALT0] := alt[0] ;
+    endif
+
+    if ( zeros != prevValues[PREVALT00] )
+        displayRibbonZero(zeros) ;
+        prevValues[PREVALT00] := zeros ;
+    endif
+
+    if ( signH!= prevValues[PREVSIGNH] )
+        displaySign(SIGNHLX, SIGNHY, signH) ;
+        prevValues[PREVSIGNH] := signH ;
+    endif
+
+    if ( sign!= prevValues[PREVSIGN] )
+        displaySign(SIGNX, SIGNY, sign) ;
+        prevValues[PREVSIGN] := sign;
+    endif
+
+    if ( signL!= prevValues[PREVSIGNL] )
+        displaySign(SIGNHLX, SIGNLY, signL) ;
+        prevValues[PREVSIGNL] := signL ;
+    endif
+
+
+
+
+endfunc
+
+func displaySign(var X, var Y, var sign)
+     if ( sign < 0 )
+        gfx_RectangleFilled(X, Y, X+9-1,Y+2-1, WHITE);
+    else
+        gfx_RectangleFilled(X, Y, X+9-1,Y+2-1, BLACK);
+    endif
+endfunc
+
+func updateVario(var alt)
+var now ;
+var variotabmul[2] ;
+var variotab[2] ;
+var timeDelta[2] ;
+var altDelta ;
+var newVario ;
+
+    now := sys_T() ;
+    // putnumXY(700,280,DEC5Z,alt) ;
+    if ( prevAlt == -10000 )
+        // First pass: zero vario
+    else
+        timeDelta[0] := now - prevAltTime ;
+        timeDelta[1] := 0 ;
+        if ( alt >= prevAlt )
+            altDelta := alt - prevAlt ;
+            varioSign := 1 ;
+        else
+            altDelta := prevAlt - alt ;
+            varioSign := -1 ;
+        endif
+        // putnumXY(700,320,DEC5Z,varioSign) ;
+        // putnumXY(700,340,DEC5Z,altDelta) ;
+        // putnumXY(700,360,DEC5Z,timeDelta[0]) ;
+        umul_1616(variotabmul, altDelta , 60000);
+        udiv_3232(variotab, variotabmul, timeDelta) ;
+        // putnumXY(700,380,DEC5Z,variotab[0]) ;
+        if ( varioSign < 0 )
+            newVario := -MIN(variotab[0],2000) ;
+        else
+            newVario := MIN(variotab[0],2000) ;
+        endif
+    endif
+    prevAltTime := now ;
+    prevAlt := alt ;
+    // putnumXY(650,280,DEC5Z,prevAlt) ;
+    // Store at rolling index
+    prevVario[varioRollingIndex] := newVario ;
+    // calculate rolling average
+    vario := (prevVario[0]+prevVario[1]+prevVario[2]+prevVario[3]+prevVario[4]+prevVario[5]+prevVario[6]+prevVario[7]+prevVario[8]+prevVario[9])/200 ;
+    // Move rolling index
+    varioRollingIndex++ ;
+    if ( varioRollingIndex == 10 )
+        varioRollingIndex := 0 ;
+    endif
+
+endfunc
+
+func displayVario(var vario, var varioSign)
+
+    if ( vario == prevValues[PREVVARIO] )
+        // No change / No display
+        return ;
+    endif
+
+
+    if (  vario < 0 )
+        gfx_RectangleFilled(443,20,456,120,BLACK) ;
+        gfx_RectangleFilled(443,121,456,120-vario,VIOLET) ;
+        gfx_RectangleFilled(443,121-vario,456,220,BLACK) ;
+    else
+        if ( vario > 0 )
+            gfx_RectangleFilled(443,20,456,120-vario,BLACK) ;
+            gfx_RectangleFilled(443,121-vario,456,120,VIOLET) ;
+            gfx_RectangleFilled(443,121,456,220,BLACK) ;
+        else
+            gfx_RectangleFilled(443,20,456,220,BLACK) ;
+        endif
+    endif
+
+    // Display upper black zone
+    // gfx_RectangleFilled(443,20,456,120-MIN(0,vario),BLACK) ;
+    // Display lower black zone
+    // gfx_RectangleFilled(443,121+MIN(0,vario),456,220,BLACK) ;
+    // Display red zone
+    // if ( vario < 0 )
+    //    gfx_RectangleFilled(443,121,456,120-vario,VIOLET) ;
+    // else
+    //    if ( vario > 0 )
+    //        gfx_RectangleFilled(443,121-vario,456,120,VIOLET) ;
+    //    endif
+    // endif
+    prevValues[PREVVARIO] :=  vario ;
+endfunc
+
+func displayReferences()
+    txt_Set(FONT_ID,4) ;
+    txt_Set(TEXT_COLOUR, LIGHTSTEELBLUE) ;
+    putstrXY(375,310,"QNH") ;
+    putstrXY(375,365,"TIME") ;
+
+    putstrXY(30,145,"KTS") ;
+    gfx_RectangleFilled(330,145,380,169,BLACK) ;
+    putstrXY(334,145,"FEET") ;
+
+    gfx_Rectangle(372,328,438,352,LIGHTSTEELBLUE) ;
+
+    displayGaugeDigit( 373, 330, 1) ;
+    displayGaugeDigit( 390, 330, 0) ;
+    displayGaugeDigit( 405, 330, 1) ;
+    displayGaugeDigit( 420, 330, 3) ;
+
+    gfx_Rectangle(372,383,472,407,LIGHTSTEELBLUE) ;
+    gfx_RectangleFilled(405,389,407,391,WHITE) ; gfx_RectangleFilled(405,399,407,401,WHITE) ;
+    gfx_RectangleFilled(438,389,440,391,WHITE) ; gfx_RectangleFilled(438,399,440,401,WHITE) ;
+
+    hours := -1 ; minutes := -1 ; seconds := -1 ;
+endfunc
+
+func displayTime()
+    var prevHour, prevMin, prevSec ;
+
+    prevHour := hours ;
+    prevMin  := minutes ;
+    prevSec := seconds ;
+
+    sys_GetTimeVar(&hours, &minutes, &seconds, &msecs);
+
+    if ( hours != prevHour )
+        displayGaugeDigit( 375, 385, hours/10) ;
+        displayGaugeDigit( 390, 385, hours%10) ;
+    endif
+    if ( minutes != prevMin )
+        displayGaugeDigit( 408, 385, minutes/10) ;
+        displayGaugeDigit( 423, 385, minutes%10) ;
+    endif
+    if ( seconds != prevSec )
+        displayGaugeDigit( 441, 385, seconds/10) ;
+        displayGaugeDigit( 456, 385, seconds%10) ;
+    endif
+endfunc
+
+func delayDisplay()
+    // Used to skip display loop if last display more recent than 33ms
+    var newDisplayT ;
+    newDisplayT := sys_T() ;
+    if ( newDisplayT - prevDisplayT < 33 )
+        return 1 ;
+    else
+        prevDisplayT := newDisplayT ;
+        return 0 ;
+    endif
+endfunc
+
+func displaySpeedScale(var speed)
+    var speedOffset, lastY, nextY, segLen, range, color ;
+
+    // Calculate offset for given speed (in kts) for start of ribbon
+    lastY := 0 ;
+    speedOffset := 865 - (speed) * 4 / 10 - 120 ;
+
+    // Manage red, yellow, green, white zones
+    for ( range := 4 ; range >= 0 && lastY < 240; range-- )
+        // Display red/yellow/green/white zone
+        switch (range)
+            case 4:
+                color := RED ;
+            break ;
+            case 3:
+                 color := YELLOW ;
+            break ;
+            case 2:
+                 color := LIME ;
+            break;
+            case 1:
+                 color := WHITESMOKE;
+            break;
+            default:
+                 color := DARKGRAY  ;
+            break;
+        endswitch
+
+        if ( speedY[range] > speedOffset )
+            segLen := MIN(speedY[range]-speedOffset,240-lastY) ;
+            nextY := lastY + segLen - 1 ;
+            gfx_RectangleFilled(5,lastY,12,nextY,color) ;
+            speedOffset := speedOffset + segLen ;
+            lastY := nextY + 1 ;
+        endif
+    next
+
+endfunc
+
+
+
+
+
+
+
+
+
+
+
+
+
