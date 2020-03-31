@@ -11,8 +11,7 @@ The display reads frames from the COM0 / COM1 ports. Trames sur COM0 / COM1.
 
 ###Frame format (ASCII 8bits, 38400bps):
 ```
-:SPEED,ALTITUDE_1013,QNH,PITCH,ROLL,GMETER,SLIP,HEADING,RPM,EGT,
-WATER,TURBO,OILTEMP,OILPRESSURE,FUEL,AMPS,VOLTS,BAK,TEXT,CRLF
+:SPEED,ALTITUDE_1013,QNH,PITCH,ROLL,GMETER,SLIP,HEADING,HEADING_BUG,TRIMV,TRUMH,FLAPS,AP,CHRONO,EDITZONE,EDITFLAG,RPM,OIL P,WATER_OR_CHT,OIL_T,EGT,FUEL P,FUEL,AMPS,VOLTS,EFIS_VOLTS,TEMP_EXT,CRLF
 ```
 
 Separator SPACE , ; TAB
@@ -56,23 +55,31 @@ Where:
 
 Example
 ```
-:1400,10000,1028,40,-100,11,1,300,432,-10,5,-4,2,0,1,0,550,400,90,98,49,310,70,100,137,72,120CRLF
+:1404,10000,1028,40,-100,11,1,300,342,-10,5,-4,2,0,1,0,550,400,90,98,49,310,70,100,137,72,120CRLF
 
-125 Knots
+140,4 Knots
 10000ft / 1013
 QNH 1028
 PITCH 4° UP
 ROLL 10° LEFT
 GMeter 1,1G
 0,1G Right Slip
-Heading 300°C
-RPM 4320
-EGT 700°C
-Temp Eau 93°C
-Turbo 1800 mbars
-Oil Temp 110°C
-Oil pressure 2000 mbars
-Fuel 35 Liters
+Heading 300
+Heading bug 342
+TRIM V -10°
+TRIM H 5° R
+FLAPS -4°
+AP HDG
+CHRONO OFF
+EDITZONE DI (Recalage Heading)
+EDITFLAG OFF (Pas en édition, ne clignote pas)
+RPM 5500
+Oil pressure 4000 mbars
+WATER 90°C
+OIL TEMP 98°C
+EGT 490°C
+Fuel Pressure 310 mbars
+Fuel 70 liters
 Amp 10.0 A load
 Volts 13.8V
 Volts backup battery EFIS 7.2V
@@ -80,4 +87,4 @@ Ext temperateure 12°C
 
 
 ## Outputs
-There is no output. Future versions will return Heading offset and QNH 
+There is no output.
