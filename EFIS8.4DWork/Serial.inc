@@ -16,12 +16,13 @@ var lineFieldCpt ;
 
 
 func initSerial()
+    setbaud(BAUD_38400) ;
     cleanReadBuffer() ;
     initLine() ;
 endfunc
 
 func initLine()
-     com_Init(comBuffer0,200,':');
+     com_Init(comBuffer0,300,':');
      lineFieldCpt := 0 ;
 endfunc
 
@@ -52,7 +53,7 @@ ok := 2 ;
         switch (char)
             case -1: // Nothing to read
                 if ( com_Full() )
-                    putchXY(0,360, 'F') ;
+                    // putchXY(0,360, 'F') ;
                     cleanReadBuffer() ;
                     com_Init(comBuffer0,200,':');
                 endif
@@ -62,7 +63,7 @@ ok := 2 ;
             case -2: // Framing / Overrun
             putchXY(0,360, 'O') ;
             case -3: // Break
-                putchXY(0,360, 'E') ;
+                // putchXY(0,360, 'E') ;
                 cleanReadBuffer() ;
                 com_Init(comBuffer0,200,':');
                 ok := 0 ; // Nothing to read
@@ -74,6 +75,7 @@ ok := 2 ;
 
             case 0x0D: // CR: validate message
                 initRequested := TRUE ;
+                // putchXY(0,360, 'C') ;
                 if ( !isEmpty0 )
                     ok := 1 ;
                 endif
@@ -84,7 +86,7 @@ ok := 2 ;
             case ':' : // Initial separator
             case 0x09: // Tab separator
                 if ( !isEmpty0 )
-                    putchXY(0,360, ',') ;
+                    // putchXY(0,360, ',') ;
 
                     // Put end of string at end of work string
                     // char := 0;
@@ -102,7 +104,7 @@ ok := 2 ;
             break ;
 
             default:
-                putchXY(0,360, char) ;
+                // putchXY(0,360, char) ;
                 isEmpty0 := FALSE ;
                 str_PutByte(strPtr0 + lineCpt0++, char);
 
@@ -117,7 +119,9 @@ ok := 2 ;
     wend
 
     if ( initRequested )
-        com_Init(comBuffer0,200,':');
+        cleanReadBuffer();
+        // com_Init(comBuffer0,300,':');
+        initLine() ;
     endif
 
     return ok ;
@@ -128,22 +132,32 @@ endfunc
 
     // SSSS Speed in 1/10 kts or Km/h
     // AAAAA Altitude = feets
+    // QNH mbar
     // PPP Pich in 1/10 Deg
     // RRRR Roll in 1/10 Deg
     // GGG G=meter in 1/100 G
     // LLL Slip in 1/10 G
-    // HHH Headinf in Deg
+    // HHH Heading in Deg
+    // BUG Heading bug in Deg
+    // TRIMV +- 50
+    // TRIMH +- 50
+    // FLAPS +50 -5
+    // AP (0: OFF, 1: LEVEL, 2: Heading, 3:Altitude hold)
+    // CHRONO (0:OFF, 1:START, 2:FLYBACK, 3:STOP
+    // EDITZONE Edit zone: ZONEDI 1 , ZONEAP 2 , ZONEBUG 3 , ZONEQNH 4 , ZONETIME 5  , ZONENONE 0
+    // EDITFLAG 0/1 (1 if in edit mide / zone blinking)
     // RPM Engine rpm /10 (400 for 4000)
-    // EGT in Deg / 10 (70 for 700)
-    // WAT Temp water in deg
-    // TUR Turbo pressure in mbar / 10 (180 for 1800 mbar)
+    // OIL P in mbar  /10 (400 for 4 Bars)
+    // WAT Temp water in deg (or CHT Rotax)
     // TOI Oil temp in Deg
-    // POI Oil pressure in mbar / 10
+    // EGT EGT in °C /10
+    // FUEP Fuelpressure in mbar
     // FUE Fuel in liter
     // AAA Amprs in 1/10 Amp
     // VVV Volts in 1/10 volts
     // BAK Backup voltage 1/10 volts
     // EXT Ext temp in 1/10 Deg
+
     // EG2, EG3, EG4 EGT 2/3/4 in Deg/10 (optional, use 999 if nor used)
     // CH1 CH2 CH3 CH4 CHTs in deg/10 (optional, use 999 if not used)
 
@@ -152,15 +166,25 @@ func dispatch(var cpt, var value)
     switch (cpt)
         case 0: speed := value;  break ;
         case 1: altitude := value;  break ;
-        case 2: pitch := value;  break ;
-        case 3: roll := value;  break ;
-        case 4: gMeter := value;  break ;
-        case 5: slip := value;  break ;
-        case 6: heading := value;  break ;
+        case 2: qnh := value;  break ;
+        case 3: pitch := value;  break ;
+        case 4: roll := value;  break ;
+        case 5: gMeter := value;  break ;
+        case 6: slip := value;  break ;
+        case 7: heading := value;  break ;
+        case 8: bug := value;  break ;
+        case 9: trimV := value;  break ;
+        case 10: trimH := value;  break ;
+        case 11: flaps := value;  break ;
+        case 12: apMode := value;  break ;
+        case 13: chrono := value;  break ;
+        case 14: editZone := value;  break ;
+        case 15: editFlag := value;  break ;
+
 
         default:
-            if ( cpt > 6 && cpt < 18 )
-                 gaugesValues[cpt-7] := value;
+            if ( cpt > 15 && cpt < 27 )
+                 gaugesValues[cpt-16] := value;
             endif
         break ;
     endswitch
@@ -247,7 +271,7 @@ func readOneSerialLine()
     endswitch
 
     if ( ok > 0 )
-        putstrXY(0,460, line) ;  // line
+        // putstrXY(0,460, line) ;  // line
         return 1 ;
     else
         return 0 ;

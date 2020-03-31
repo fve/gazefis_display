@@ -9,7 +9,7 @@
 
 #inherit "Serial.inc"
 #inherit "Gauges.inc"
-
+#inherit "Trim.inc"
 
 #constant TRUE      1
 #constant FALSE    0
@@ -84,12 +84,27 @@
 #constant PREVSIGNH 21
 #constant PREVSIGNL 22
 #constant PREVVARIOSIGN 24
+#constant PREVFUEL 25
 #constant FLASH 300
 #constant GAUGELEN 100
 #constant SPEEDSLEN 240
 
 
+#constant GRADIENTLOW 0x3B32
+#constant GRADIENTHIGH LIGHTSTEELBLUE
+#constant READMODE LIGHTSTEELBLUE
+#constant EDITMODE YELLOW
 
+#constant ZONEDI 1
+#constant ZONEAP 2
+#constant ZONEBUG 3
+#constant ZONEQNH 4
+#constant ZONETIME 5
+#constant ZONENONE 0
+
+#constant LVL 1
+#constant HDG 2
+#constant ALT 3
 
 
 var X[2] ;      // Horizon Line X1 X2
@@ -125,46 +140,47 @@ var varioRollingIndex ;
 var gaugesValues[12];
 var alertStates[12];
 var onOffTime, onOffState ;
-var qnh, flightLevelMode, headingDelta ;
+var qnh, flightLevelMode, bug, trimH, trimV, flaps ;
 var hours, minutes, seconds, msecs ;
-var prevRoll, prevPitch, prevPitchFrameOffset, prevRollFrameOffset, prevHeading ;
-var prevDisplayT, prevSpeedOffset;
-
-
+var prevRoll, prevPitch, prevPitchFrameOffset, prevRollFrameOffset, prevHeading, prevQnh ;
+var prevDisplayT, prevSpeedOffset, prevTrimH, prevTrimV, prevFlaps, prevBug;
+var editZone, prevEditZone, editFlag, prevEditFlag, editBlinkState;
 var speed, altitude, pitch, roll, gMeter, slip, heading;
+var prevApMode, apMode ;
+var prevChrono, chrono ;
 
 
 
 #DATA
-// RPM EGT T=EAU P=TURBO T=HUILE P=HUILE FUEL AMP VOLT BACKUP T=EXT
+// RPM P=huile CHT T=huile EGT FUELP FUEL AMP VOLT BACKUP T=EXT
 
     word addZero
-       1,   1,   0,   1,   0,   1,   0,   0,   0,   0,   0
+       1,   1,   0,   0,   1,   0,   0,   0,   0,   0,   0
     word addDot
-       0,   0,   0,   0,   0,   0,   0,   0,   1,   1,   1
+       0,   0,   0,   0,   0,   0,   0,   1,   1,   1,   1
     word gaugeX
-     589, 732, 589, 732, 622, 666, 540, 756, 711, 594, 666
+     569, 689, 569, 689, 569, 689, 769, 562, 682, 744, 760
     word gaugeY
-      77,  77, 236, 236, 328, 328, 328, 328, 328, 442, 442
+      65,  65, 210, 210, 355, 355, 326, 438, 438, 438, 442
     word gaugeMin
-       0,  10,  20,  50,  30,   0,   0,   0,  80,  50,-400
+       0,  0,  20,  20,  10,   50,   0,   0,  80,  0,-400
     word gaugeMax
-     550, 100, 120, 300, 150, 900,  50, 150, 180, 120, 650
+     650, 800, 160, 160, 88, 500,  80, 80, 180, 60, 650
     word gaugeAlert
-     500,   0, 98,  250, 120, -60,  -6,   0,-115, -70, 600
+     580, -80 , 125,  130, 88, -150,  -8,   0,-135, 0, 600
     word gaugeFirstColorLastValue
-    149, 115,  160, 225,  70,  93,  88,  33,  65, 115, 140
+    280, 113,  259, 138, 285, 140, 14,  33,  65, 115, 140
     word gaugeSecondColorLastValue
-    274, 290,  245, 270,  25,  55,  30,  20,  32, 110,   0
+    291, 287, 259, 267, 285, 265, 14,  20,  32, 110,   0
     word gaugeFirstColor
-    ORANGE,WHITESMOKE,BLUE,
-           LIME,BLUE, RED,ORANGE,LIME, RED, RED
+    LIME,RED,LIME,
+           BLUE,LIME, RED,ORANGE,LIME, RED, RED
     word gaugeSecondColor
-    LIME,LIME,
-      LIME,ORANGE,LIME,LIME,WHITESMOKE,ORANGE,LIME,LIME
+    ORANGE,LIME,
+      LIME,LIME,LIME,LIME,SADDLEBROWN,ORANGE,LIME,LIME
     word gaugeThirdColor
-      RED,WHITESMOKE,
-         RED,RED,RED,LIME,WHITESMOKE,RED, RED, RED
+      RED,RED,
+         RED,RED,RED,RED,WHITESMOKE,RED, RED, RED
     word prevDigit0
     30,34,38,42,46,50,54,58,62,66,70
     word prevDigit1
@@ -207,14 +223,7 @@ func main()
             pause(200);
         wend
     endif
-//    gfx_TransparentColour(0x0020);    // uncomment if transparency required
-//    gfx_Transparency(ON);             // uncomment if transparency required
 
-    //hFontn := file_LoadImageControl("EFIS8.dan", "EFIS8.gcn", 1); // Open handle to access uSD fonts, uncomment if required and change n to font number dropping a and c if > 9
-    //hstrings := file_Open("EFIS8.txf", 'r') ; // Open handle to access uSD strings, uncomment if required
-
-
-    // pause(2000);
     // gfx_Contrast(15) ;
 
     gfx_Set(SCREEN_MODE,LANDSCAPE) ;
@@ -227,25 +236,28 @@ func main()
     ribbonInit() ;
     EFISFrameInit() ;
     prevValuesInit() ;
+    qnh := 1013 ;
+    bug := 0 ;
+    trimV :=  /*-*/0 ;
+    trimH :=  /*-*/0 ;
+    flaps := /*-*/0 ;
+    editZone := ZONENONE ;
+    editFlag := OFF ;
+    apMode := OFF ;
+    chrono := OFF ;
+
     preComputedArraysInit();
     displayGaugeFrames() ;
-    displayDI(0) ;
-    displaySpeed(100) ;
-    displayAlt(5500) ;
+    displayTrimAndFlapsFrames() ;
+    gaugesValues [8] := 138 ;
+
+    displayDI(0,0) ;
+    displaySpeed(0) ;
+    displayAlt(0) ;
     displayReferences();
     initSerial() ;
 
-    gaugesValues[0]  := 460 ; // RPM
-    gaugesValues[1]  :=  70 ; // EGT
-    gaugesValues[2]  :=  70 ; // EAU
-    gaugesValues[3]  := 195 ; // TURBO
-    gaugesValues[4]  :=  95 ; // T HUILE
-    gaugesValues[5]  := 350 ; // P HUILE
-    gaugesValues[6]  :=  47 ; // FUEL
-    gaugesValues[7]  :=   5 ; // AMP
-    gaugesValues[8]  := 138 ; // VOLT
-    gaugesValues[9]  :=  90 ; // BACKUP
-    gaugesValues[10] := 255 ; // T EXT
+
 
 
     txt_Set(FONT_ID,4);
@@ -269,18 +281,22 @@ func main()
     repeat
         readOneSerialLine() ;
 
-        // if ( !delayDisplay() )
+        if ( !delayDisplay() )
+            displayTime() ;
             displaySpeed(speed) ;
             displayAlt(altitude) ;
+            displayQNH(qnh) ;
             updateVario(altitude) ;
             displayVario(vario, varioSign) ;
             efisFrame(pitch, roll) ;
-            displayDI(heading) ;
+            displayDI(heading, bug) ;
             sanitizeGauges();
             displayGauges() ;
+            displayTrim() ;
+            displayFlaps() ;
             setOnOffState() ;
-        displayTime() ;
-        // endif
+            displayEditMode() ;
+        endif
 
     forever
 
@@ -369,7 +385,7 @@ func main()
 
         for ( pitch := 0; pitch <= 200 ; pitch++ )
             efisFrame(0, pitch) ;
-            displayDI(pitch / 20) ;
+            displayDI(pitch / 20, bug) ;
             setOnOffState() ;
             sanitizeGauges();
             displayGauges() ;
@@ -380,7 +396,7 @@ func main()
 
             next
             efisFrame(MIN((value - 5500), 100), 200 ) ;
-            displayDI(((value-5500)/10)%360) ;
+            displayDI(((value-5500)/10)%360, bug) ;
             displayAlt(value) ;
             updateVario(value) ;
             displayVario(vario, varioSign) ;
@@ -394,7 +410,7 @@ func main()
 
             next
             efisFrame(100, 200 ) ;
-            displayDI(((value-5500)/10)%360) ;
+            displayDI(((value-5500)/10)%360, bug) ;
             displayAlt(value) ;
             updateVario(value) ;
             displayVario(vario, varioSign) ;
@@ -540,6 +556,9 @@ endfunc
 
 func prevValuesInit()
     var value ;
+    prevEditZone := ZONENONE ;
+    prevEditFlag := OFF ;
+    editBlinkState := OFF ;
     prevAltTenth := 200; // Will force recomputation
     prevAltHundreds[0] := ALTY1 ;
     prevAltHundreds[1] := ALTY1 + ( 3 * ALTREF ) ;
@@ -550,6 +569,7 @@ func prevValuesInit()
     for ( value := 80; value <= 90; value++ )
         prevValues[value] := -9999 ;
     next
+    prevValues[PREVFUEL] := -9999 ;
     prevAlt := -10000 ;
     prevAltTime := -1 ;
     vario := 0 ;
@@ -567,9 +587,16 @@ func prevValuesInit()
     prevPitch := -10000 ;
     prevPitchFrameOffset := -10000 ;
     prevRollFrameOffset := -10000 ;
-    prevHeading := 1 ;
+    prevHeading := -10000 ;
+    prevTrimH := -10000 ;
+    prevTrimV := -10000 ;
+    prevFlaps := -10000 ;
     prevDisplayT := sys_T() ;
     prevSpeedOffset := -1 ;
+    prevQnh := -10000 ;
+    prevBug := -10000 ;
+    prevApMode := -10000 ;
+    prevChrono := OFF ;
 endfunc
 
 func setOnOffState()
@@ -745,49 +772,6 @@ func rollFrameOffset(var roll)
     return pixelsCount + offsetSign ;
 endfunc
 
-/*
-func calculateRibbonZeroPtr(var tenth)
-    var pZero ;
-
-    pZero := ribbonZero ;
-
-
-        if ( tenth < 5 )
-            pZero += (25- 10 - ( tenth * 25 / 10 ) ) * 15 ;
-        else
-            pZero += (50 - 10 - ( tenth * 25 / 10 ) ) * 15 ;
-        endif
-
-
-    return pZero;
-endfunc
-
-
-func calculateRibbon15Ptr(var valueTenth)
-    var p;
-
-
-    p := ribbon15 ;
-
-    if ( valueTenth < 95 )
-        p += (250 - 10 - ( valueTenth * 25 / 10) ) * 15 ;
-    else
-        p += (250 + 250 - 10  - ( valueTenth * 25 / 10 ) ) * 15;
-    endif
-
-
-    return p;
-endfunc
-
-func displayRibbon(var valueTenth)
-    gfx_WriteGRAMarea(RIBBONX, RIBBONY - 10,RIBBONX+15-1, RIBBONY+40-10-1, ribbon15Ptr[valueTenth]);
-endfunc
-
-func displayRibbonZero(var valueTenth)
-    gfx_WriteGRAMarea(RIBBONX+15, RIBBONY - 10,RIBBONX+15+15-1, RIBBONY+40- 10-1, ribbonZeroPtr[valueTenth]);
-endfunc
-
-*/
 
 func calculateRibbonZeroPtr(var tenth)
     var pZero ;
@@ -873,16 +857,48 @@ func displayRibbon22(var valueTenth)
 
 endfunc
 
-func displayDI(var heading)
-    if ( heading == prevHeading )
+func displayDI(var heading, var bug)
+    if ( heading == prevHeading && bug == prevBug)
         return 0 ;
     endif
+    // bug := 180 ;
     prevHeading := heading ;
+    prevBug := bug ;
     // DI 1.0 generated 16/12/2018 09:17:27
     img_SetWord(hndl, iDI, IMAGE_INDEX, heading) ; // where frame is 0 to 90
+    img_SetPosition(hndl, iDI,116,257);//set checkout box position
     img_Show(hndl,iDI) ;
+
+    txt_Set(FONT_ID,7) ;
+    txt_Set(TEXT_HIGHLIGHT, BLACK) ;
+    txt_Set(TEXT_COLOUR, WHITESMOKE) ;
+    putnumXY( 205, 244, DEC3Z, heading);
+    putnumXY( 205, 455, DEC3Z, (heading+180)%360);
+
+    // gfx_CircleFilled(x, y, 10, YELLOW); // we'll draw a solid red circle
+    var pieAngleStart, pieAngleEnd, pieAngleTmp ;
+    pieAngleStart := (bug + 270 + 324)%360 ;
+    pieAngleEnd := (bug + 270 + 36) % 360 ;
+    if ( pieAngleEnd < pieAngleStart )
+        pieAngleTmp := pieAngleEnd ;
+        pieAngleEnd := pieAngleStart ;
+        pieAngleStart := pieAngleTmp ;
+    endif
+    var targetX, targetY;
+    gfx_OrbitInit(&targetX, &targetY);
+    gfx_MoveTo(116+100, 257+100);
+    gfx_Orbit((bug+270)%360, 95);
+    gfx_CircleFilled(targetX,targetY,4,YELLOW); // mark the target point
+
+    var X := 340 ;
+    var Y := 274 ;
+    txt_Set(TEXT_COLOUR, YELLOW) ;
+    putnumXY( X+12, Y+22, DEC3Z, bug);
+
     return 1 ;
 endfunc
+
+
 
 func displayHeading(var heading)
 
@@ -921,6 +937,8 @@ func displaySpeed(var newSpeed)
         prevValues[PREVSPEED0] := speed[0] ;
     endif
 endfunc
+
+
 
 func displayAlt(var newAlt)
     var alt[4], altH[3], altL[3], zeros, hundreds, altLow, altHigh, sign, signL, signH ;
@@ -1151,28 +1169,170 @@ func displayVario(var vario, var varioSign)
     prevValues[PREVVARIO] :=  vario ;
 endfunc
 
+func getEditColor(var onOff)
+    if ( onOff == OFF )
+        return READMODE ;
+    else
+        return EDITMODE ;
+    endif
+endfunc
+
+func displayQNHEdit(var onOff)
+    gfx_Rectangle(316,435,384,460,getEditColor(onOff)) ;
+endfunc
+
+func displayTimeEdit(var onOff)
+     gfx_Rectangle(18,435,115,460,getEditColor(onOff)) ;
+endfunc
+
+func displayAPEdit(var onOff)
+    var X := 344  ;
+    var Y := 274 ;
+    gfx_Rectangle(X,Y,X+40,Y+20,getEditColor(onOff)) ;
+endfunc
+
+func displayBugEdit(var onOff)
+     var X := 344  ;
+     var Y := 274 ;
+     gfx_Rectangle(X,Y+20,X+40,Y+40,getEditColor(onOff)) ;
+endfunc
+
+func displayDIEdit(var onOff)
+    var color ;
+    if ( onOff == OFF )
+        color := BLACK ;
+    else
+        color := EDITMODE ;
+    endif
+    gfx_Line(115,293,115,420,color) ;
+    gfx_Line(316,293,316,420,color) ;
+endfunc
+
+
+/*
+#constant ZONEDI 1
+#constant ZONEAP 2
+#constant ZONEBUG 3
+#constant ZONEQNH 4
+#constant ZONETIME 5
+#constant ZONENONE 0
+
+editZone, prevEditZone
+*/
+
+func displayZone(var zoneId, var onOff)
+    switch (zoneId)
+        case ZONEDI:
+            displayDIEdit(onOff) ;
+            break ;
+        case ZONEAP:
+            displayAPEdit(onOff) ;
+            break ;
+        case ZONEBUG:
+            displayBugEdit(onOff) ;
+            break ;
+        case ZONEQNH:
+            displayQNHEdit(onOff) ;
+            break ;
+        case ZONETIME:
+            displayTimeEdit(onOff) ;
+            break ;
+    endswitch
+endfunc
+
+func displayEditMode()
+    var alert ;
+
+    if ( prevEditZone != editZone )
+        // Edit zone has just changed: stop edit on prev
+        displayZone(prevEditZone, OFF) ;
+        prevEditZone := editZone ;
+        prevEditFlag := OFF ;
+
+        if ( editFlag == OFF )
+            // Display plain edit mode : we just pass over the zone, no blicking to manage
+            displayZone(editZone, ON) ;
+            return ;
+        endif
+    endif
+
+    if ( editFlag != prevEditFlag )
+         prevEditFlag := editFlag ;
+        if ( editFlag == OFF )
+            // Turn off EDIT mode (exit field by clicking rotator but stays on same field)
+            displayZone(editZone, ON) ;
+            return ;
+        endif
+    endif
+
+    if ( editZone == ZONENONE )
+        // No edit zone selected, display nothing
+        return ;
+    endif
+
+    if ( editFlag == OFF )
+        // No zone, change, no edit flag (blink): we're done
+        // editFlag is ON when value is being changed (user has pressed the rotator button)
+        return ;
+    endif
+
+    // If we reached this point there is a blinking edit zone to display: display according to onOffState
+
+    if ( editBlinkState != onOffState )
+        // Blinking state is changing  (goes to ON or OFF)
+        editBlinkState := onOffState  ;
+        displayZone(editZone, onOffState) ;
+    endif
+
+endfunc
+
+
 func displayReferences()
-    txt_Set(FONT_ID,4) ;
+    txt_Set(FONT_ID,7) ;
     txt_Set(TEXT_COLOUR, LIGHTSTEELBLUE) ;
-    putstrXY(375,310,"QNH") ;
-    putstrXY(375,365,"TIME") ;
+    putstrXY(337,460,"QNH") ;
+    displayQNHEdit(OFF) ;
+
+    putstrXY(52,460,"TIME") ;
+    displayTimeEdit(OFF) ;
+
+    txt_Set(FONT_ID,4) ;
 
     putstrXY(30,145,"KTS") ;
     gfx_RectangleFilled(330,145,380,169,BLACK) ;
     putstrXY(334,145,"FEET") ;
 
-    gfx_Rectangle(372,328,438,352,LIGHTSTEELBLUE) ;
+    displayDIEdit(OFF) ;
 
-    displayGaugeDigit( 373, 330, 1) ;
-    displayGaugeDigit( 390, 330, 0) ;
-    displayGaugeDigit( 405, 330, 1) ;
-    displayGaugeDigit( 420, 330, 3) ;
 
-    gfx_Rectangle(372,383,472,407,LIGHTSTEELBLUE) ;
-    gfx_RectangleFilled(405,389,407,391,WHITE) ; gfx_RectangleFilled(405,399,407,401,WHITE) ;
-    gfx_RectangleFilled(438,389,440,391,WHITE) ; gfx_RectangleFilled(438,399,440,401,WHITE) ;
+    var X := 344  ;
+    var Y := 274 ; // 270
+    txt_Set(FONT_ID,7) ;
+    putstrXY(X-20,Y+2,"AP") ;
+    displayAPEdit(OFF) ;
+    txt_Set(FONT_ID,4) ;
+    txt_Set(TEXT_COLOUR, RED) ;
+    putstrXY(X+3,Y+4,"OFF") ;
+    displayBugEdit(OFF) ;
+
+
+    X := 28 ;
+    Y := 442 ;
+    gfx_RectangleFilled(X+52,Y,X+56,Y+3,WHITE) ; gfx_RectangleFilled(X+52,Y+10,X+56,Y+13,WHITE) ;
+    gfx_RectangleFilled(X+20,Y,X+23,Y+3,WHITE) ; gfx_RectangleFilled(X+20,Y+10,X+23,Y+13,WHITE) ;
 
     hours := -1 ; minutes := -1 ; seconds := -1 ;
+
+    // txt_Set(TEXT_HIGHLIGHT, LIGHTSTEELBLUE) ;
+    txt_Set(FONT_ID,7) ;
+    txt_Set(TEXT_COLOUR, LIGHTSTEELBLUE) ;
+    putstrXY(25, 0,"OAT ") ;
+    txt_Set(TEXT_COLOUR, WHITE) ;
+    putstrXY(58, 0,"-") ;
+    putnumXY(63, 0,DEC2ZB,7) ;
+    txt_Set(TEXT_COLOUR, BLACK) ;
+    // putstrXY(77, 0," deg. C") ;
+
 endfunc
 
 func displayTime()
@@ -1182,20 +1342,27 @@ func displayTime()
     prevMin  := minutes ;
     prevSec := seconds ;
 
-    sys_GetTimeVar(&hours, &minutes, &seconds, &msecs);
+    // sys_GetTimeVar(&hours, &minutes, &seconds, &msecs);
+    hours := 20 ;
+    minutes := 30 ;
+    seconds := 20 ;
+    var X ;
+    X := 19 ;
+
 
     if ( hours != prevHour )
-        displayGaugeDigit( 375, 385, hours/10) ;
-        displayGaugeDigit( 390, 385, hours%10) ;
+        displayGaugeDigit( X, 438, hours/10) ;
+        displayGaugeDigit( X+15, 438, hours%10) ;
     endif
     if ( minutes != prevMin )
-        displayGaugeDigit( 408, 385, minutes/10) ;
-        displayGaugeDigit( 423, 385, minutes%10) ;
+        displayGaugeDigit( X+33, 438, minutes/10) ;
+        displayGaugeDigit( X+48, 438, minutes%10) ;
     endif
     if ( seconds != prevSec )
-        displayGaugeDigit( 441, 385, seconds/10) ;
-        displayGaugeDigit( 456, 385, seconds%10) ;
+        displayGaugeDigit( X+66, 438, seconds/10) ;
+        displayGaugeDigit( X+81, 438, seconds%10) ;
     endif
+
 endfunc
 
 func delayDisplay()
@@ -1234,7 +1401,7 @@ func displaySpeedScale(var speed)
                  color := WHITESMOKE;
             break;
             default:
-                 color := DARKGRAY  ;
+                 color := DARKGRAY ;
             break;
         endswitch
 
@@ -1248,6 +1415,44 @@ func displaySpeedScale(var speed)
     next
 
 endfunc
+
+func displayQNH(var value)
+    var X, Y ;
+
+    X := 317 ;   // 310
+    Y := 438 ;     // 456
+    if ( value != prevQnh )
+        txt_Set(FONT_ID,7) ;
+        gfx_RectangleFilled(347,82,380, 98,LIGHTSTEELBLUE) ;   // LIGHTSTEELBLUE
+        txt_Set(TEXT_COLOUR, BLACK) ;
+        // txt_Set(TEXT_HEIGHT, 2) ;
+        txt_Set(TEXT_HIGHLIGHT, LIGHTSTEELBLUE) ;
+        putnumXY(350,82,DEC4,value) ;
+        // displayGaugeDigit( 326, 74, 8) ;
+        // displayGaugeDigit( 340, 74, 8) ;
+        // displayGaugeDigit( 355, 74, 8) ;
+        // displayGaugeDigit( 369, 74, 8) ;
+
+
+
+
+        var digits[4] ;
+
+        digits[0] := value % 10 ;
+        digits[1] := (value / 10) % 10 ;
+        digits[2] := (value / 100) % 10 ;
+        digits[3] := (value / 1000) ;
+
+        displayGaugeDigit( X, Y, digits[3]) ;
+        displayGaugeDigit( X+17, Y, digits[2]) ;
+        displayGaugeDigit( X+34, Y, digits[1]) ;
+        displayGaugeDigit( X+51, Y, digits[0]) ;
+
+        prevQnh := value ;
+    endif
+
+endfunc
+
 
 
 

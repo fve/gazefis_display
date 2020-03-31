@@ -1,4 +1,4 @@
-// File generated 24/12/2019 16:21:20
+// File generated 31/03/2020 19:21:24
 // Warning! This is a generated file, any manual changes will be
 // lost during the next generation.
 
@@ -11,6 +11,7 @@
     iDI             // offset 0xC1E00
     iRPM            // offset 0x1C39400
     iOilTemp        // offset 0x1E2BA00
+    iGauge1         // offset 0x1E92400
 #END
 
 #IFNOT EXISTS NOGLOBALS

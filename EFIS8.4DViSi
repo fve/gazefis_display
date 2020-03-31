@@ -9,7 +9,7 @@ Options
     Checksum                     No
     ResponseSize                 2
     Multidrop                    No
-    Destination                  0
+    Destination                  1
     DestBank                     0
     MainForm                     0
     SndBuf                       0
@@ -37,7 +37,7 @@ Image
     Name                         EFISFrame
     Alias                        EFISFRame
     Height                       480
-    Image                        Full-EFIS.jpg
+    Image                        'Full-EFIS copy.jpg'
     Left                         0
     Source.Height                480
     Source.Left                  0
@@ -111,7 +111,7 @@ AngularMeter
     Caption                      RPM
     CaptionXOffset               0
     CaptionYOffset               0
-    CenterDotColor               BLACK
+    CenterDotColor               0x000034
     CenterDotWidth               30
     Color                        BLACK
     ColorZone1                   RED
@@ -190,6 +190,51 @@ Gauge
     TickHeight                   1
     Top                          280
     Width                        20
+    OnChanged                    ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Gauge
+    Name                         Gauge1
+    Alias                        Gauge1
+    Bevel.BorderColor            clBtnFace
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             BLACK
+    Bevel.InnerHighlight         clBtnHighlight
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            clBtnShadow
+    Bevel.InnerSpace             1
+    Bevel.InnerStyle             Lowered
+    Bevel.Innerwidth             2
+    Bevel.OuterColor             clBtnFace
+    Bevel.OuterHighlight         clBtnHighlight
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            clBtnShadow
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             Raised
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    Color                        BLACK
+    Height                       169
+    Left                         799
+    Maxvalue                     100
+    Minvalue                     0
+    Orientation                  Vertical
+    Palette1.High                clLime
+    Palette1.Low                 0x005100
+    Palette2.High                clYellow
+    Palette2.Low                 0x005151
+    Palette3.High                clRed
+    Palette3.Low                 0x000051
+    Percent1                     60
+    Percent2                     25
+    Spacing                      1
+    Step                         10
+    Style                        BottomLeft
+    TickHeight                   1
+    Top                          246
+    Width                        1
     OnChanged                    ''
     OnTouchMoving                ''
     OnTouchPressed               ''

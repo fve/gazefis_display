@@ -2,7 +2,7 @@ func displayGaugeFrames()
     var i;
     // _*+/-[]
     // gfx_CircleFilled(X+67, Y+67, 65, LIME);
-    for ( i := 0; i < 4 ; i++ )
+    for ( i := 0; i < 6 ; i++ )
         gfx_PieSlice(gaugeX[i], gaugeY[i], 0, 65, 1, 90, 315, 0, gaugeThirdColor[i]);
         gfx_PieSlice(gaugeX[i], gaugeY[i], 0, 65, 1, 90, gaugeSecondColorLastValue[i], 0, gaugeSecondColor[i]);
         gfx_PieSlice(gaugeX[i], gaugeY[i], 0, 65, 1, 90, gaugeFirstColorLastValue[i] , 0, gaugeFirstColor[i]) ; // AZURE);
@@ -18,20 +18,43 @@ func displayGaugeFrames()
             gfx_RectangleFilled(gaugeX[i]+26, gaugeY[i]-2, gaugeX[i]+28, gaugeY[i],WHITE) ;
         endif
     next
-    for ( i := 4; i < 9 ; i++ )
-        gfx_RectangleFilled(gaugeX[i]+0, gaugeY[i]+16, gaugeX[i]+5, gaugeY[i]+116, gaugeThirdColor[i]);
-        gfx_RectangleFilled(gaugeX[i]+0, gaugeY[i]+16+gaugeSecondColorLastValue[i], gaugeX[i]+5, gaugeY[i]+116, gaugeSecondColor[i]);
-        gfx_RectangleFilled(gaugeX[i]+0, gaugeY[i]+16+gaugeFirstColorLastValue[i], gaugeX[i]+5,  gaugeY[i]+116, gaugeFirstColor[i]) ;
+
+    // FUEL
+    // gfx_Rectangle(gaugeX[6],gaugeY[6]-3,gaugeX[6]+15,gaugeY[6]-326,LIGHTSTEELBLUE) ;
+    gfx_Gradient(GRAD_DOWN, gaugeX[6], gaugeY[6]-326+164, gaugeX[6], gaugeY[6]-3, GRADIENTHIGH, GRADIENTLOW);
+    gfx_Gradient(GRAD_UP,  gaugeX[6], gaugeY[6]-326, gaugeX[6], gaugeY[6]-326+164, GRADIENTHIGH, GRADIENTLOW);
+    gfx_Gradient(GRAD_DOWN, gaugeX[6]+15, gaugeY[6]-326+164, gaugeX[6]+15, gaugeY[6]-3, GRADIENTHIGH, GRADIENTLOW);
+    gfx_Gradient(GRAD_UP,  gaugeX[6]+15, gaugeY[6]-326, gaugeX[6]+15, gaugeY[6]-326+164, GRADIENTHIGH, GRADIENTLOW);
+
+
+    for ( i := 0; i < gaugeFirstColorLastValue[6] ; i++ )
+        displayFuelSegment(6, i, 0) ;
     next
+
+    // Digital gauges
+    // gfx_Rectangle(504,430,800,480,LIGHTSTEELBLUE) ;  // 504
+    for ( i := 7; i < 10 ; i++ )
+        if ( addDot[i] )
+            gfx_RectangleFilled(gaugeX[i]+32, gaugeY[i]+20, gaugeX[i]+34, gaugeY[i]+18,WHITE) ;
+        endif
+    next
+
     gaugeTexts() ;
     // Decimal point of voltage
-    gfx_RectangleFilled(gaugeX[8]+31, gaugeY[8]+133, gaugeX[8]+32,  gaugeY[8]+134, WHITE) ;
+    // gfx_RectangleFilled(gaugeX[8]+15, gaugeY[8]+126, gaugeX[8]+16,  gaugeY[8]+127, WHITE) ;
+    // DSet & display initial state
+    for ( i := 0; i < 11 ; i++ )
+         gaugesValues[i] := (gaugeMin[i] + gaugeMax[i]) / 2 ;
+         // gaugesValues[i] := gaugeMin[i] ;
+    next
+    // gfx_Rectangle(740,0,740,479,WHITESMOKE) ;
+    displayGauges() ;
 endfunc
 
 func displayGauges()
     var i ;
 
-    for ( i := 0; i < 4 ; i++ )
+    for ( i := 0; i < 6 ; i++ )
         // Display numbers and round gauges
         if ( addZero[i] > 0 )
             displayRoundGauge(i, gaugesValues[i]) ;
@@ -43,14 +66,16 @@ func displayGauges()
         displayAlert(gaugeX[i]+22, gaugeY[i]+54, i) ;
     next
 
-    for ( i := 4; i < 9 ; i++ )
-        // Display numbers and linear gauges
-        displayLinearGauge(i, gaugesValues[i]) ;
-        displayAlert(gaugeX[i]+3, gaugeY[i]+131, i) ;
+    displayFuelBarGauge(gaugesValues[6]) ;
+    displayAlert(gaugeX[6]+7, gaugeY[6]+83, 6) ;
+
+    for ( i := 7; i < 10 ; i++ )
+        // Display numbers and round gauges
+        displayGaugeNumbers(gaugeX[i], gaugeY[i], i, gaugesValues[i]) ;
     next
-    displaySmallGaugeNumbers(gaugeX[6]+16, gaugeY[6]+122, i, gaugesValues[6], DEC2Z) ;
-    displaySmallGaugeNumbers(gaugeX[8]+16, gaugeY[8]+122, i, gaugesValues[8]/10, DEC2Z) ;
-    displaySmallGaugeNumbers(gaugeX[8]+33, gaugeY[8]+122, i, gaugesValues[8]%10, DEC1Z) ;
+    displayAlert(gaugeX[8]-33, gaugeY[8]+11, 8) ;
+
+
 endfunc
 
 func displayRoundGauge(var gaugeIndex, var value)
@@ -118,31 +143,56 @@ func displayGaugeNumbers(var X, var Y, var gaugeIndex, var value)
 
 endfunc
 
-func displayLinearGauge(var gaugeIndex, var value)
-    var offsetTmpMul[2] ;
-    var offsetTmpDiv[2] ;
-    var maxMinusMin[2] ;
-    var offset ;
 
-    maxMinusMin[1] := 0 ;
+func displayFuelSegment(var gaugeIndex, var value, var isOn)
+    var offsetY ;
+    var color ;
 
-
-    // Calculate indicator offset
-    umul_1616(offsetTmpMul,gaugesValues[gaugeIndex]-gaugeMin[gaugeIndex], GAUGELEN);
-    maxMinusMin[0] := gaugeMax[gaugeIndex]-gaugeMin[gaugeIndex] ;
-    udiv_3232(offsetTmpDiv, offsetTmpMul, maxMinusMin);
-    offset :=  16 + 100 - offsetTmpDiv[0] ;
-    if ( offset != prevValues[prevDigit3[gaugeIndex]] )
-        // Remove indicator
-        if ( prevValues[prevDigit3[gaugeIndex]] >= 0 )
-            gfx_RectangleFilled(gaugeX[gaugeIndex]+6, gaugeY[gaugeIndex]+prevValues[prevDigit3[gaugeIndex]] , gaugeX[gaugeIndex]+22, gaugeY[gaugeIndex]+prevValues[prevDigit3[gaugeIndex]], AQUA);
+    if ( value < gaugeSecondColorLastValue[gaugeIndex] )
+        if ( isOn == 1 )
+            color := gaugeFirstColor[gaugeIndex] ;
+        else
+             color := gaugeSecondColor[gaugeIndex] ;
         endif
-        // Display indicator
-        gfx_RectangleFilled(gaugeX[gaugeIndex]+6, gaugeY[gaugeIndex]+offset , gaugeX[gaugeIndex]+22, gaugeY[gaugeIndex]+offset, AQUA);
-        prevValues[prevDigit3[gaugeIndex]] := offset ;
+    else
+        if ( isOn == 1 )
+            color := gaugeThirdColor[gaugeIndex] ;
+        else
+             color := BLACK ;
+        endif
+    endif
+    offsetY :=  gaugeY[gaugeIndex]-5-((3+1)*value) ;
+    gfx_RectangleFilled(gaugeX[gaugeIndex]+2,offsetY,gaugeX[gaugeIndex]+13,offsetY-3+1,color) ;
+endfunc
+
+func displayFuelBarGauge(var value)
+    var gaugeIndex ;
+    var i ;
+
+    gaugeIndex := 6 ; // Fixed position of Fuel Bar Gauge
+    if ( prevValues[PREVFUEL] < 0  )
+         prevValues[PREVFUEL] := 0 ;
+    endif
+    if ( value != prevValues[PREVFUEL] )
+        if ( value > prevValues[PREVFUEL] )
+            for ( i := prevValues[PREVFUEL]; i < value ; i++ )
+                // Light ON new segments
+                displayFuelSegment(gaugeIndex, i, 1) ;
+            next
+        else
+             for ( i := value; i < prevValues[PREVFUEL] ; i++ )
+                // Light OFF new segments
+                displayFuelSegment(gaugeIndex, i, 0) ;
+            next
+        endif
+
+        displayGaugeNumbers(gaugeX[gaugeIndex]-25, gaugeY[gaugeIndex]+7,gaugeIndex, value) ;
+        prevValues[PREVFUEL] := value ;
     endif
 
 endfunc
+
+
 
 func displayAlert(var X, var Y, var gaugeIndex)
     var alert ;
@@ -165,7 +215,7 @@ func displayAlert(var X, var Y, var gaugeIndex)
         if ( alert > 0 )
             // gfx_CircleFilled(X, Y, 9, RED);
         else
-            gfx_CircleFilled(X, Y, 9, DARKRED);
+            gfx_CircleFilled(X, Y, 9, DARKSLATEGRAY);
             // Stop flashing
             return ;
         endif
@@ -178,7 +228,7 @@ func displayAlert(var X, var Y, var gaugeIndex)
         if ( onOffState > 0 )
             gfx_CircleFilled(X, Y, 9, RED);
         else
-            gfx_CircleFilled(X, Y, 9, DARKRED);
+            gfx_CircleFilled(X, Y, 9, DARKSLATEGRAY);
             // gfx_CircleFilled(X, Y, 9, BLACK);
         endif
         alertStates[gaugeIndex] := onOffState ;
@@ -194,22 +244,32 @@ func gaugeTexts()
     txt_Set(FONT_ID,4) ;
     txt_Set(TEXT_COLOUR, LIGHTSTEELBLUE) ;
     putstrXY(gaugeX[0]+7,gaugeY[0]+9,"RPM") ;
-    putstrXY(gaugeX[1]+8,gaugeY[1]+9,"EGT") ;
-    putstrXY(gaugeX[2]-17,gaugeY[2]+9,"WATER") ;
-    putstrXY(gaugeX[3]-17,gaugeY[3]+9,"TURBO") ;
+    putstrXY(gaugeX[1]-17,gaugeY[1]+9,"OIL P") ;
+    putstrXY(gaugeX[2]+7,gaugeY[2]+9,"WAT") ;
+    putstrXY(gaugeX[3]-17,gaugeY[3]+9,"OIL T") ;
+    putstrXY(gaugeX[4]+7,gaugeY[4]+9,"EGT") ;
+    putstrXY(gaugeX[5]-29,gaugeY[5]+9,"FUEL P") ;
+
+    putstrXY(gaugeX[6]-17,gaugeY[6]+38,"FUEL") ;
+
+    putstrXY(gaugeX[7]+70,gaugeY[7]+26,"BUS") ;
+    // putstrXY(gaugeX[7]-42,gaugeY[7]+3,"BAT.") ;
+
 
     txt_Set(FONT_ID,7) ;
     putstrXY(gaugeX[0]+11,gaugeY[0]+25,"min-1") ;
-    putstrXY(gaugeX[1]+0,gaugeY[1]+25,"deg. C") ;
+    putstrXY(gaugeX[1]+10,gaugeY[1]+25,"mbar") ;
     putstrXY(gaugeX[2]+2,gaugeY[2]+25,"deg. C") ;
-    putstrXY(gaugeX[3]+10,gaugeY[3]+25,"mbar") ;
+    putstrXY(gaugeX[3]+0,gaugeY[3]+25,"deg. C") ;
+    putstrXY(gaugeX[4]+0,gaugeY[4]+25,"deg. C") ;
+    putstrXY(gaugeX[5]+10,gaugeY[5]+25,"mbar") ;
 
-    putstrXY(gaugeX[4]-10,gaugeY[4]-5," T.") ;
-    putstrXY(gaugeX[4]+15,gaugeY[4]-5,"OIL") ;
-    putstrXY(gaugeX[5]-7,gaugeY[4]-5," P.") ;
-    putstrXY(gaugeX[6]-10,gaugeY[6]-5,"Fuel") ;
-    putstrXY(gaugeX[7]-10,gaugeY[7]-5,"Amp.") ;
-    putstrXY(gaugeX[8]-10,gaugeY[8]-5,"Volts") ;
+    putstrXY(gaugeX[6]-10,gaugeY[6]+54,"liters") ;
+
+    putstrXY(gaugeX[7]+20,gaugeY[7]+24,"amp.") ;
+    putstrXY(gaugeX[8]+15,gaugeY[8]+24,"volts") ;
+    putstrXY(gaugeX[9]+2,gaugeY[9]+24,"backup") ;
+
 endfunc
 
 func sanitizeGauges()
@@ -224,6 +284,31 @@ func sanitizeGauges()
             endif
         endif
     next
+endfunc
+
+func displayNumericGaugesFrames()
+    txt_Set(FONT_ID,4) ;
+    txt_Set(TEXT_COLOUR, LIGHTSTEELBLUE) ;
+    putstrXY(375,255,"QNH") ;
+    putstrXY(8,255,"TIME") ;
+
+    putstrXY(30,145,"KTS") ;
+    gfx_RectangleFilled(330,145,380,169,BLACK) ;
+    putstrXY(334,145,"FEET") ;
+
+    gfx_Rectangle(372,273,438,297,LIGHTSTEELBLUE) ;
+
+    displayGaugeDigit( 373, 275, 1) ;
+    displayGaugeDigit( 390, 275, 0) ;
+    displayGaugeDigit( 405, 275, 1) ;
+    displayGaugeDigit( 420, 275, 3) ;
+
+    // gfx_Rectangle(372,328,472,352,LIGHTSTEELBLUE) ;
+    gfx_Rectangle(5,273,105,297,LIGHTSTEELBLUE) ;
+    gfx_RectangleFilled(36,279,40,281,WHITE) ; gfx_RectangleFilled(36,289,40,291,WHITE) ;
+    gfx_RectangleFilled(69,279,73,281,WHITE) ; gfx_RectangleFilled(69,289,73,291,WHITE) ;
+
+    hours := -1 ; minutes := -1 ; seconds := -1 ;
 endfunc
 
 
